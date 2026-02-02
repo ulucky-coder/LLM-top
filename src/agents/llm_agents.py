@@ -68,6 +68,15 @@ class GeminiAgent(BaseAgent):
 
     def _create_llm(self) -> BaseChatModel:
         settings = get_settings()
+        # Gemini через отдельный прокси (vsellm.ru)
+        if settings.gemini_proxy_enabled:
+            return ChatOpenAI(
+                model=settings.gemini_model,
+                temperature=settings.temperature,
+                max_tokens=settings.max_tokens,
+                api_key=settings.gemini_proxy_api_key,
+                base_url=settings.gemini_proxy_base_url,
+            )
         if settings.llm_proxy_enabled:
             return _create_proxy_llm(settings.gemini_model)
         return ChatGoogleGenerativeAI(

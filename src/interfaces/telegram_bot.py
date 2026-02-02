@@ -258,29 +258,70 @@ class CosiliumBot:
 
     async def _run_analysis(self, chat_id: int, session: UserSession):
         """Запустить анализ в фоне"""
+        import httpx
+
         try:
-            # Здесь должен быть вызов реального API
-            # Пока заглушка
-            await asyncio.sleep(5)
+            # Вызов реального API
+            async with httpx.AsyncClient(timeout=300.0) as client:
+                response = await client.post(
+                    "http://localhost:8000/analyze",
+                    json={
+                        "task": session.current_task,
+                        "task_type": session.task_type,
+                        "max_iterations": 2
+                    }
+                )
 
-            result_text = f"""**Результаты анализа**
+                if response.status_code != 200:
+                    raise Exception(f"API error: {response.status_code}")
 
-Задача: {session.current_task[:100]}...
+                data = response.json()
 
-**Резюме:**
-[Здесь будет резюме анализа]
+            # Форматируем результат
+            synthesis = data.get("synthesis", {})
+            analyses = data.get("analyses", [])
 
-**Ключевые выводы:**
-1. Вывод 1 (уверенность: 80%)
-2. Вывод 2 (уверенность: 75%)
+            # Агенты
+            agents_status = " | ".join([
+                f"{a['agent_name']} ✓" for a in analyses
+            ])
 
-**Рекомендации:**
-- Рекомендация 1
-- Рекомендация 2
+            # Выводы
+            conclusions = synthesis.get("conclusions", [])
+            conclusions_text = ""
+            for i, c in enumerate(conclusions[:5], 1):
+                prob = c.get("probability", "N/A")
+                conclusions_text += f"{i}. {c.get('conclusion', '')[:150]}\n   _Вероятность: {prob}_\n\n"
 
-**Уровень консенсуса:** 82%
+            # Рекомендации
+            recommendations = synthesis.get("recommendations", [])
+            recs_text = ""
+            for r in recommendations[:3]:
+                recs_text += f"• {r.get('option', '')}: {r.get('description', '')[:100]}\n"
 
-Используй /feedback для оценки качества."""
+            consensus = synthesis.get("consensus_level", 0)
+            consensus_pct = int(consensus * 100) if consensus else 0
+
+            result_text = f"""🧠 *Результаты анализа*
+
+📋 *Задача:* {session.current_task[:100]}...
+
+🤖 *Агенты:* {agents_status}
+
+📊 *Консенсус:* {consensus_pct}%
+
+━━━━━━━━━━━━━━━━━━━━━
+
+📌 *Ключевые выводы:*
+
+{conclusions_text if conclusions_text else "Нет выводов"}
+
+💡 *Рекомендации:*
+{recs_text if recs_text else "Нет рекомендаций"}
+
+━━━━━━━━━━━━━━━━━━━━━
+
+_Используй /feedback для оценки качества_"""
 
             await self.app.bot.send_message(
                 chat_id=chat_id,
@@ -291,7 +332,7 @@ class CosiliumBot:
         except Exception as e:
             await self.app.bot.send_message(
                 chat_id=chat_id,
-                text=f"Ошибка при анализе: {str(e)}\n\nПопробуй ещё раз."
+                text=f"❌ Ошибка при анализе: {str(e)}\n\nПопробуй ещё раз или проверь /status"
             )
 
     def run(self):

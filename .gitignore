@@ -47,3 +47,4 @@ temp/
 # Test outputs
 test-results/
 coverage/
+.bot.pid

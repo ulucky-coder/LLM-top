@@ -20,14 +20,19 @@ class Settings(BaseSettings):
     llm_proxy_api_key: str = ""
     llm_proxy_base_url: str = "https://api.vsellm.ru/v1"
 
+    # Gemini via proxy (vsellm.ru)
+    gemini_proxy_enabled: bool = False
+    gemini_proxy_api_key: str = ""
+    gemini_proxy_base_url: str = "https://api.vsellm.ru/v1"
+
     # Tavily (search API, альтернатива Perplexity)
     tavily_api_key: str = ""
     tavily_enabled: bool = False
 
     # Model settings (compatible with vsellm.ru proxy)
     chatgpt_model: str = "gpt-4o"
-    claude_model: str = "claude-3-5-sonnet-20241022"
-    gemini_model: str = "gemini-1.5-pro"
+    claude_model: str = "claude-3-haiku-20240307"
+    gemini_model: str = "google/gemini-2.5-flash"
     deepseek_model: str = "deepseek-chat"
 
     # LLM parameters
