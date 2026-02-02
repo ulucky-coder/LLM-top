@@ -23,7 +23,7 @@ class TavilySearchResponse(BaseModel):
     query: str
     results: list[TavilySearchResult]
     answer: Optional[str] = None  # AI-generated answer
-    follow_up_questions: list[str] = []
+    follow_up_questions: Optional[list[str]] = None
 
 
 class TavilySearch:
@@ -123,7 +123,7 @@ class TavilySearch:
                 query=query,
                 results=results,
                 answer=data.get("answer"),
-                follow_up_questions=data.get("follow_up_questions", []),
+                follow_up_questions=data.get("follow_up_questions") or [],
             )
 
     async def search_news(
@@ -237,7 +237,7 @@ URL: {r.url}
 
 """)
 
-        if response.follow_up_questions:
+        if response.follow_up_questions and len(response.follow_up_questions) > 0:
             parts.append("### Связанные вопросы\n")
             for q in response.follow_up_questions:
                 parts.append(f"- {q}\n")

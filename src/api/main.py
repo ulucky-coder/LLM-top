@@ -296,5 +296,42 @@ async def analyze_smart(input_data: TaskInput, background_tasks: BackgroundTasks
     }
 
 
+@api.get("/search")
+async def search(query: str, max_results: int = 5):
+    """
+    Поиск актуальной информации через Tavily.
+
+    Используется для верификации фактов и сбора данных.
+    """
+    from src.tools.tavily_search import TavilySearch
+
+    tavily = TavilySearch()
+    result = await tavily.search(
+        query=query,
+        max_results=max_results,
+        include_answer=True,
+    )
+
+    return {
+        "query": result.query,
+        "answer": result.answer,
+        "results": [r.model_dump() for r in result.results],
+        "follow_up_questions": result.follow_up_questions,
+    }
+
+
+@api.post("/verify")
+async def verify_fact(statement: str, context: str = ""):
+    """
+    Проверить факт/утверждение на актуальность.
+    """
+    from src.tools.tavily_search import TavilySearch
+
+    tavily = TavilySearch()
+    result = await tavily.verify_fact(statement, context)
+
+    return result
+
+
 # Import для удобства
 from src.config import AGENT_CONFIGS
