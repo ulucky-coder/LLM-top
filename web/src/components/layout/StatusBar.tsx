@@ -1,7 +1,8 @@
 "use client";
 
 import { useSessionStore } from "@/stores/sessionStore";
-import { AGENTS } from "@/lib/constants";
+import { useUIStore } from "@/stores/uiStore";
+import { AGENTS, VIEW_MODES } from "@/lib/constants";
 import { Check, Loader2, Circle, Pause, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -9,11 +10,22 @@ import { cn } from "@/lib/utils";
 
 export function StatusBar() {
   const { currentSession, pauseAnalysis, resumeAnalysis, cancelAnalysis } = useSessionStore();
+  const { viewMode, presentSlideIndex } = useUIStore();
+
+  // Minimal status bar for present mode
+  if (viewMode === "present") {
+    return null;
+  }
+
+  // Show current mode in status bar
+  const currentModeInfo = VIEW_MODES.find((m) => m.id === viewMode);
 
   if (!currentSession) {
     return (
       <footer className="h-8 border-t border-slate-800 bg-slate-950/80 flex items-center px-4 text-xs text-slate-500">
         <span>Ready</span>
+        <span className="mx-2">•</span>
+        <span className="text-slate-600">{currentModeInfo?.label} Mode</span>
       </footer>
     );
   }

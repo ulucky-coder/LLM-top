@@ -228,8 +228,8 @@ export function Drawer() {
 
       {/* Content */}
       <div className="flex-1 overflow-hidden">
-        {drawerContent === "agent" && drawerData.agentId && (
-          <AgentInspector agentId={drawerData.agentId as string} />
+        {drawerContent === "agent" && typeof drawerData.agentId === "string" && (
+          <AgentInspector agentId={drawerData.agentId} />
         )}
         {drawerContent === "critique" && (
           <div className="p-4 text-slate-400">Critique details coming soon</div>

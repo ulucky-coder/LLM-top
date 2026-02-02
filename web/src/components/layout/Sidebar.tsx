@@ -91,7 +91,7 @@ function TimelineEventItem({ event, isLast }: TimelineEventItemProps) {
         )}
 
         {/* Agent sub-events */}
-        {event.type === "analysis_start" && event.data?.agents && (
+        {event.type === "analysis_start" && Array.isArray(event.data?.agents) && (
           <div className="mt-2 space-y-1">
             {(event.data.agents as string[]).map((agentId) => {
               const agent = AGENTS.find((a) => a.id === agentId);
@@ -113,7 +113,7 @@ function TimelineEventItem({ event, isLast }: TimelineEventItemProps) {
 }
 
 export function Sidebar() {
-  const { sidebarCollapsed } = useUIStore();
+  const { sidebarCollapsed, viewMode } = useUIStore();
   const { currentSession, sessions, createSession } = useSessionStore();
   const [expandedSections, setExpandedSections] = useState({
     history: false,
@@ -125,6 +125,11 @@ export function Sidebar() {
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
+
+  // Hide sidebar in present mode
+  if (viewMode === "present") {
+    return null;
+  }
 
   if (sidebarCollapsed) {
     return (

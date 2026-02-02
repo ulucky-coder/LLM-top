@@ -6,6 +6,16 @@ export const AGENTS = [
   { id: "deepseek", name: "DeepSeek", role: "Formal Analyst", color: "bg-violet-500", colorHex: "#8b5cf6" },
 ] as const;
 
+// View modes
+export const VIEW_MODES = [
+  { id: "workspace", label: "Workspace", icon: "LayoutDashboard", shortcut: "1", description: "Multi-panel analysis workspace" },
+  { id: "document", label: "Document", icon: "FileText", shortcut: "2", description: "Full-width prose view" },
+  { id: "present", label: "Present", icon: "Presentation", shortcut: "3", description: "Fullscreen presentation" },
+  { id: "compare", label: "Compare", icon: "GitCompare", shortcut: "4", description: "Side-by-side session comparison" },
+] as const;
+
+export type ViewModeId = typeof VIEW_MODES[number]["id"];
+
 // Task types
 export const TASK_TYPES = [
   { value: "strategy", label: "Strategy", description: "Markets, competitors, business decisions" },
@@ -51,4 +61,19 @@ export const SHORTCUTS = {
   addNote: "mod+shift+n",
   collapseAll: "mod+up",
   expandAll: "mod+down",
+  // View mode shortcuts
+  modeWorkspace: "1",
+  modeDocument: "2",
+  modePresent: "3",
+  modeCompare: "4",
+  cycleMode: "m",
+  // Present mode shortcuts
+  nextSlide: "space",
+  prevSlide: "left",
+  presentFullscreen: "f",
+  speakerNotes: "n",
+  exitPresent: "escape",
+  // Compare mode shortcuts
+  syncScroll: "s",
+  toggleDiff: "d",
 } as const;

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 export type DrawerContent = "agent" | "critique" | "settings" | "export" | null;
+export type ViewMode = "workspace" | "document" | "present" | "compare";
 
 interface UIState {
   // Layout
@@ -8,6 +9,20 @@ interface UIState {
   drawerOpen: boolean;
   drawerContent: DrawerContent;
   drawerData: Record<string, unknown>;
+
+  // View mode
+  viewMode: ViewMode;
+  previousViewMode: ViewMode;
+
+  // Present mode
+  presentSlideIndex: number;
+  speakerNotesVisible: boolean;
+  presentFullscreen: boolean;
+
+  // Compare mode
+  compareSessionIds: [string | null, string | null];
+  compareSyncScroll: boolean;
+  compareShowDiff: boolean;
 
   // Command palette
   commandPaletteOpen: boolean;
@@ -29,6 +44,23 @@ interface UIState {
   closeDrawer: () => void;
   toggleDrawer: () => void;
 
+  // View mode actions
+  setViewMode: (mode: ViewMode) => void;
+  cycleViewMode: () => void;
+
+  // Present mode actions
+  nextSlide: () => void;
+  prevSlide: () => void;
+  setSlideIndex: (index: number) => void;
+  toggleSpeakerNotes: () => void;
+  togglePresentFullscreen: () => void;
+  exitPresentMode: () => void;
+
+  // Compare mode actions
+  setCompareSession: (slot: 0 | 1, sessionId: string | null) => void;
+  toggleCompareSyncScroll: () => void;
+  toggleCompareShowDiff: () => void;
+
   openCommandPalette: () => void;
   closeCommandPalette: () => void;
   setCommandQuery: (query: string) => void;
@@ -44,12 +76,29 @@ interface UIState {
   selectCritique: (critique: { from: string; to: string } | null) => void;
 }
 
-export const useUIStore = create<UIState>((set) => ({
+const VIEW_MODE_ORDER: ViewMode[] = ["workspace", "document", "present", "compare"];
+
+export const useUIStore = create<UIState>((set, get) => ({
   // Initial state
   sidebarCollapsed: false,
   drawerOpen: false,
   drawerContent: null,
   drawerData: {},
+
+  // View mode
+  viewMode: "workspace",
+  previousViewMode: "workspace",
+
+  // Present mode
+  presentSlideIndex: 0,
+  speakerNotesVisible: false,
+  presentFullscreen: false,
+
+  // Compare mode
+  compareSessionIds: [null, null],
+  compareSyncScroll: true,
+  compareShowDiff: true,
+
   commandPaletteOpen: false,
   commandQuery: "",
   expandedSections: new Set<string>(),
@@ -80,6 +129,73 @@ export const useUIStore = create<UIState>((set) => ({
       drawerOpen: !state.drawerOpen,
       drawerContent: state.drawerOpen ? null : state.drawerContent,
     }));
+  },
+
+  // View mode
+  setViewMode: (mode) => {
+    set((state) => ({
+      viewMode: mode,
+      previousViewMode: state.viewMode,
+      presentSlideIndex: mode === "present" ? 0 : state.presentSlideIndex,
+    }));
+  },
+
+  cycleViewMode: () => {
+    set((state) => {
+      const currentIndex = VIEW_MODE_ORDER.indexOf(state.viewMode);
+      const nextIndex = (currentIndex + 1) % VIEW_MODE_ORDER.length;
+      return {
+        viewMode: VIEW_MODE_ORDER[nextIndex],
+        previousViewMode: state.viewMode,
+      };
+    });
+  },
+
+  // Present mode
+  nextSlide: () => {
+    set((state) => ({ presentSlideIndex: state.presentSlideIndex + 1 }));
+  },
+
+  prevSlide: () => {
+    set((state) => ({ presentSlideIndex: Math.max(0, state.presentSlideIndex - 1) }));
+  },
+
+  setSlideIndex: (index) => {
+    set({ presentSlideIndex: Math.max(0, index) });
+  },
+
+  toggleSpeakerNotes: () => {
+    set((state) => ({ speakerNotesVisible: !state.speakerNotesVisible }));
+  },
+
+  togglePresentFullscreen: () => {
+    set((state) => ({ presentFullscreen: !state.presentFullscreen }));
+  },
+
+  exitPresentMode: () => {
+    const { previousViewMode } = get();
+    set({
+      viewMode: previousViewMode === "present" ? "workspace" : previousViewMode,
+      presentFullscreen: false,
+      speakerNotesVisible: false,
+    });
+  },
+
+  // Compare mode
+  setCompareSession: (slot, sessionId) => {
+    set((state) => {
+      const newIds = [...state.compareSessionIds] as [string | null, string | null];
+      newIds[slot] = sessionId;
+      return { compareSessionIds: newIds };
+    });
+  },
+
+  toggleCompareSyncScroll: () => {
+    set((state) => ({ compareSyncScroll: !state.compareSyncScroll }));
+  },
+
+  toggleCompareShowDiff: () => {
+    set((state) => ({ compareShowDiff: !state.compareShowDiff }));
   },
 
   // Command palette

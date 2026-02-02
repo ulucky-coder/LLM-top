@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useUIStore } from "@/stores/uiStore";
+import { useUIStore, ViewMode } from "@/stores/uiStore";
 import { useSessionStore } from "@/stores/sessionStore";
 
 export function useKeyboardShortcuts() {
@@ -13,6 +13,16 @@ export function useKeyboardShortcuts() {
     toggleDrawer,
     expandAllSections,
     collapseAllSections,
+    viewMode,
+    setViewMode,
+    cycleViewMode,
+    nextSlide,
+    prevSlide,
+    toggleSpeakerNotes,
+    togglePresentFullscreen,
+    exitPresentMode,
+    toggleCompareSyncScroll,
+    toggleCompareShowDiff,
   } = useUIStore();
 
   const { createSession, startAnalysis, pauseAnalysis, currentSession } = useSessionStore();
@@ -40,11 +50,87 @@ export function useKeyboardShortcuts() {
       // If typing in input, don't trigger single-key shortcuts
       if (isInput) return;
 
-      // Single key shortcuts
+      // Present mode shortcuts (priority)
+      if (viewMode === "present") {
+        switch (e.key.toLowerCase()) {
+          case " ": // Space
+          case "arrowright":
+          case "j":
+            e.preventDefault();
+            nextSlide();
+            return;
+
+          case "arrowleft":
+          case "k":
+            e.preventDefault();
+            prevSlide();
+            return;
+
+          case "f":
+            e.preventDefault();
+            togglePresentFullscreen();
+            return;
+
+          case "n":
+            e.preventDefault();
+            toggleSpeakerNotes();
+            return;
+
+          case "escape":
+            e.preventDefault();
+            exitPresentMode();
+            return;
+        }
+      }
+
+      // Compare mode shortcuts
+      if (viewMode === "compare") {
+        switch (e.key.toLowerCase()) {
+          case "s":
+            e.preventDefault();
+            toggleCompareSyncScroll();
+            return;
+
+          case "d":
+            e.preventDefault();
+            toggleCompareShowDiff();
+            return;
+        }
+      }
+
+      // Single key shortcuts (global)
       switch (e.key.toLowerCase()) {
-        case "n":
+        // Mode switching (1-4)
+        case "1":
           e.preventDefault();
-          createSession();
+          setViewMode("workspace");
+          break;
+
+        case "2":
+          e.preventDefault();
+          setViewMode("document");
+          break;
+
+        case "3":
+          e.preventDefault();
+          setViewMode("present");
+          break;
+
+        case "4":
+          e.preventDefault();
+          setViewMode("compare");
+          break;
+
+        case "m":
+          e.preventDefault();
+          cycleViewMode();
+          break;
+
+        case "n":
+          if (viewMode !== "present") {
+            e.preventDefault();
+            createSession();
+          }
           break;
 
         case "/":
@@ -111,5 +197,15 @@ export function useKeyboardShortcuts() {
     expandAllSections,
     collapseAllSections,
     currentSession,
+    viewMode,
+    setViewMode,
+    cycleViewMode,
+    nextSlide,
+    prevSlide,
+    toggleSpeakerNotes,
+    togglePresentFullscreen,
+    exitPresentMode,
+    toggleCompareSyncScroll,
+    toggleCompareShowDiff,
   ]);
 }
