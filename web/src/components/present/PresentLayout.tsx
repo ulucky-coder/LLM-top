@@ -101,13 +101,13 @@ export function PresentLayout() {
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <Presentation className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">No Presentation Available</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">Презентация недоступна</h2>
           <p className="text-slate-400 mb-4">
-            Complete an analysis to generate presentation slides
+            Завершите анализ для создания слайдов презентации
           </p>
           <Button variant="outline" onClick={exitPresentMode} className="border-slate-700">
             <X className="h-4 w-4 mr-2" />
-            Exit Present Mode
+            Выйти из презентации
           </Button>
         </div>
       </div>

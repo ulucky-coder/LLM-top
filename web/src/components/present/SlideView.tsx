@@ -52,7 +52,7 @@ function TitleSlide({ slide }: { slide: Slide }) {
 function InputSlide({ slide }: { slide: Slide }) {
   return (
     <div className="max-w-4xl mx-auto">
-      <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">{slide.title}</h2>
+      <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">Задача анализа</h2>
       <div className="p-6 lg:p-8 bg-slate-900/50 rounded-2xl border border-slate-800">
         <p className="text-xl lg:text-2xl text-slate-300 leading-relaxed whitespace-pre-wrap">
           {slide.content}
@@ -94,7 +94,7 @@ function AgentSlide({ slide }: { slide: Slide }) {
           <div className="p-6 bg-slate-900/50 rounded-xl border border-slate-800">
             <h3 className="text-lg font-semibold text-emerald-400 mb-4 flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5" />
-              Key Points
+              Ключевые моменты
             </h3>
             <ul className="space-y-3">
               {keyPoints.map((point: string, i: number) => (
@@ -112,7 +112,7 @@ function AgentSlide({ slide }: { slide: Slide }) {
           <div className="p-6 bg-amber-950/30 rounded-xl border border-amber-900/50">
             <h3 className="text-lg font-semibold text-amber-400 mb-4 flex items-center gap-2">
               <AlertTriangle className="h-5 w-5" />
-              Risks Identified
+              Выявленные риски
             </h3>
             <ul className="space-y-3">
               {risks.map((risk: string, i: number) => (

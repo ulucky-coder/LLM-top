@@ -18,9 +18,9 @@ export function DocumentLayout() {
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <FileText className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">No Session Selected</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">Сессия не выбрана</h2>
           <p className="text-slate-400">
-            Start a new analysis or select a session to view in document mode
+            Начните новый анализ или выберите сессию для просмотра в режиме документа
           </p>
         </div>
       </div>
@@ -40,7 +40,7 @@ export function DocumentLayout() {
         {/* Title */}
         <header className="mb-8 pb-6 border-b border-slate-800">
           <h1 className="text-2xl lg:text-3xl font-bold text-white mb-3">
-            Analysis: {task.slice(0, 50)}{task.length > 50 ? "..." : ""}
+            Анализ: {task.slice(0, 50)}{task.length > 50 ? "..." : ""}
           </h1>
           <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
             <Badge variant="outline" className="capitalize">{taskType}</Badge>
@@ -61,7 +61,7 @@ export function DocumentLayout() {
         {/* Input Section */}
         <CollapsibleSection
           id="input"
-          title="Input"
+          title="Ввод"
           defaultExpanded={true}
           isExpanded={expandedSections.has("input")}
           onToggle={() => toggleSection("input")}
@@ -73,7 +73,7 @@ export function DocumentLayout() {
         {hasResults && (
           <CollapsibleSection
             id="agents"
-            title={`Agent Analyses (${analyses.length})`}
+            title={`Анализы агентов (${analyses.length})`}
             defaultExpanded={true}
             isExpanded={expandedSections.has("agents")}
             onToggle={() => toggleSection("agents")}
@@ -101,7 +101,7 @@ export function DocumentLayout() {
                           "border-red-500 text-red-400"
                         )}
                       >
-                        {confidencePercent}% confident
+                        {confidencePercent}% уверенность
                       </Badge>
                     </div>
 
@@ -111,7 +111,7 @@ export function DocumentLayout() {
 
                     {analysis.key_points.length > 0 && (
                       <div className="mt-4">
-                        <h5 className="text-sm font-medium text-slate-400 mb-2">Key Points</h5>
+                        <h5 className="text-sm font-medium text-slate-400 mb-2">Ключевые моменты</h5>
                         <ul className="list-disc list-inside space-y-1 text-slate-300">
                           {analysis.key_points.map((point, i) => (
                             <li key={i}>{point}</li>
@@ -124,7 +124,7 @@ export function DocumentLayout() {
                       <div className="mt-4 p-3 bg-amber-950/30 border border-amber-900/50 rounded-lg">
                         <h5 className="text-sm font-medium text-amber-400 mb-2 flex items-center gap-2">
                           <AlertCircle className="h-4 w-4" />
-                          Risks Identified
+                          Выявленные риски
                         </h5>
                         <ul className="list-disc list-inside space-y-1 text-amber-200/80">
                           {analysis.risks.map((risk, i) => (
@@ -144,7 +144,7 @@ export function DocumentLayout() {
         {synthesis?.summary && (
           <CollapsibleSection
             id="synthesis"
-            title="Synthesis"
+            title="Синтез"
             defaultExpanded={true}
             isExpanded={expandedSections.has("synthesis")}
             onToggle={() => toggleSection("synthesis")}
@@ -157,7 +157,7 @@ export function DocumentLayout() {
         {synthesis && synthesis.conclusions.length > 0 && (
           <CollapsibleSection
             id="conclusions"
-            title={`Conclusions (${synthesis.conclusions.length})`}
+            title={`Выводы (${synthesis.conclusions.length})`}
             defaultExpanded={true}
             isExpanded={expandedSections.has("conclusions")}
             onToggle={() => toggleSection("conclusions")}
@@ -176,7 +176,7 @@ export function DocumentLayout() {
                       </Badge>
                       {conclusion.falsification_condition && (
                         <span className="text-slate-500">
-                          Falsifiable: {conclusion.falsification_condition}
+                          Фальсифицируемо: {conclusion.falsification_condition}
                         </span>
                       )}
                     </div>
@@ -191,7 +191,7 @@ export function DocumentLayout() {
         {synthesis && synthesis.recommendations.length > 0 && (
           <CollapsibleSection
             id="recommendations"
-            title={`Recommendations (${synthesis.recommendations.length})`}
+            title={`Рекомендации (${synthesis.recommendations.length})`}
             defaultExpanded={true}
             isExpanded={expandedSections.has("recommendations")}
             onToggle={() => toggleSection("recommendations")}
@@ -206,7 +206,7 @@ export function DocumentLayout() {
                     </h4>
                     {rec.score && (
                       <Badge variant="outline" className="border-slate-600">
-                        Score: {rec.score}/10
+                        Оценка: {rec.score}/10
                       </Badge>
                     )}
                   </div>
@@ -214,7 +214,7 @@ export function DocumentLayout() {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     {rec.pros.length > 0 && (
                       <div>
-                        <span className="text-emerald-400 font-medium">Pros:</span>
+                        <span className="text-emerald-400 font-medium">Плюсы:</span>
                         <ul className="mt-1 space-y-1">
                           {rec.pros.map((pro, j) => (
                             <li key={j} className="text-slate-400">+ {pro}</li>
@@ -224,7 +224,7 @@ export function DocumentLayout() {
                     )}
                     {rec.cons.length > 0 && (
                       <div>
-                        <span className="text-red-400 font-medium">Cons:</span>
+                        <span className="text-red-400 font-medium">Минусы:</span>
                         <ul className="mt-1 space-y-1">
                           {rec.cons.map((con, j) => (
                             <li key={j} className="text-slate-400">- {con}</li>
@@ -241,8 +241,8 @@ export function DocumentLayout() {
 
         {/* Footer */}
         <footer className="mt-12 pt-6 border-t border-slate-800 text-sm text-slate-500">
-          <p>Generated with LLM-top Multi-Agent Analysis System</p>
-          <p>Session: {currentSession.id} | Created: {currentSession.createdAt.toLocaleString()}</p>
+          <p>Создано в LLM-top Мульти-агентная система анализа</p>
+          <p>Сессия: {currentSession.id} | Создано: {currentSession.createdAt.toLocaleString()}</p>
         </footer>
       </article>
     </div>

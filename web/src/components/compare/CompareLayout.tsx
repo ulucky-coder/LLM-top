@@ -48,10 +48,10 @@ export function CompareLayout() {
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <GitCompare className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">Compare Sessions</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">Сравнение сессий</h2>
           <p className="text-slate-400 max-w-md">
-            Complete at least two analyses to compare sessions side by side.
-            This feature helps identify differences in agent consensus, conclusions, and recommendations.
+            Завершите как минимум два анализа, чтобы сравнить сессии.
+            Эта функция помогает выявить различия в консенсусе агентов, выводах и рекомендациях.
           </p>
         </div>
       </div>
@@ -70,13 +70,13 @@ export function CompareLayout() {
                 value={compareSessionIds[0]}
                 onChange={(id) => setCompareSession(0, id)}
                 excludeId={compareSessionIds[1]}
-                label="Session A"
+                label="Сессия A"
               />
               <SessionSelector
                 value={compareSessionIds[1]}
                 onChange={(id) => setCompareSession(1, id)}
                 excludeId={compareSessionIds[0]}
-                label="Session B"
+                label="Сессия B"
               />
             </div>
 
@@ -90,14 +90,14 @@ export function CompareLayout() {
                   "border-slate-700",
                   compareSyncScroll && "bg-violet-600/20 border-violet-500"
                 )}
-                title="Sync scroll (S)"
+                title="Синхронизация прокрутки (S)"
               >
                 {compareSyncScroll ? (
                   <Link2 className="h-4 w-4 mr-2" />
                 ) : (
                   <Unlink2 className="h-4 w-4 mr-2" />
                 )}
-                Sync
+                Синхр
               </Button>
 
               <Button
@@ -108,14 +108,14 @@ export function CompareLayout() {
                   "border-slate-700",
                   compareShowDiff && "bg-violet-600/20 border-violet-500"
                 )}
-                title="Show diff (D)"
+                title="Показать различия (D)"
               >
                 {compareShowDiff ? (
                   <Eye className="h-4 w-4 mr-2" />
                 ) : (
                   <EyeOff className="h-4 w-4 mr-2" />
                 )}
-                Diff
+                Разл
               </Button>
             </div>
           </div>
@@ -179,7 +179,7 @@ function SessionPanel({ session, label, otherSession, showDiff }: SessionPanelPr
       <div className="flex-1 flex items-center justify-center p-8 border border-dashed border-slate-700 rounded-lg">
         <div className="text-center text-slate-500">
           <GitCompare className="h-8 w-8 mx-auto mb-2 opacity-50" />
-          <p>Select Session {label}</p>
+          <p>Выберите сессию {label}</p>
         </div>
       </div>
     );
@@ -209,7 +209,7 @@ function SessionPanel({ session, label, otherSession, showDiff }: SessionPanelPr
       {/* Input */}
       <Card className="bg-slate-900/50 border-slate-800">
         <CardContent className="p-4">
-          <h4 className="text-sm text-slate-500 uppercase tracking-wider mb-2">Input</h4>
+          <h4 className="text-sm text-slate-500 uppercase tracking-wider mb-2">Ввод</h4>
           <p className="text-slate-300 text-sm">{session.task}</p>
         </CardContent>
       </Card>
@@ -218,7 +218,7 @@ function SessionPanel({ session, label, otherSession, showDiff }: SessionPanelPr
       {session.analyses.length > 0 && (
         <Card className="bg-slate-900/50 border-slate-800">
           <CardContent className="p-4">
-            <h4 className="text-sm text-slate-500 uppercase tracking-wider mb-3">Agent Confidence</h4>
+            <h4 className="text-sm text-slate-500 uppercase tracking-wider mb-3">Уверенность агентов</h4>
             <AgentConfidenceComparison
               sessionA={label === "A" ? session : otherSession}
               sessionB={label === "B" ? session : otherSession}
@@ -232,7 +232,7 @@ function SessionPanel({ session, label, otherSession, showDiff }: SessionPanelPr
       {session.synthesis?.summary && (
         <Card className="bg-slate-900/50 border-slate-800">
           <CardContent className="p-4">
-            <h4 className="text-sm text-slate-500 uppercase tracking-wider mb-2">Synthesis</h4>
+            <h4 className="text-sm text-slate-500 uppercase tracking-wider mb-2">Синтез</h4>
             <p className="text-slate-300 text-sm">{session.synthesis.summary}</p>
           </CardContent>
         </Card>
@@ -243,7 +243,7 @@ function SessionPanel({ session, label, otherSession, showDiff }: SessionPanelPr
         <Card className="bg-slate-900/50 border-slate-800">
           <CardContent className="p-4">
             <h4 className="text-sm text-slate-500 uppercase tracking-wider mb-3">
-              Conclusions ({session.synthesis.conclusions.length})
+              Выводы ({session.synthesis.conclusions.length})
             </h4>
             <ul className="space-y-2">
               {session.synthesis.conclusions.map((c, i) => (
@@ -269,7 +269,7 @@ function SessionPanel({ session, label, otherSession, showDiff }: SessionPanelPr
         <Card className="bg-slate-900/50 border-slate-800">
           <CardContent className="p-4">
             <h4 className="text-sm text-slate-500 uppercase tracking-wider mb-3">
-              Recommendations ({session.synthesis.recommendations.length})
+              Рекомендации ({session.synthesis.recommendations.length})
             </h4>
             <div className="space-y-3">
               {session.synthesis.recommendations.map((rec, i) => (
@@ -294,25 +294,25 @@ function SessionPanel({ session, label, otherSession, showDiff }: SessionPanelPr
       {/* Metrics */}
       <Card className="bg-slate-900/50 border-slate-800">
         <CardContent className="p-4">
-          <h4 className="text-sm text-slate-500 uppercase tracking-wider mb-2">Metrics</h4>
+          <h4 className="text-sm text-slate-500 uppercase tracking-wider mb-2">Метрики</h4>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <div className="text-xl font-bold text-white">
                 {session.metrics.totalTokens.toLocaleString()}
               </div>
-              <div className="text-xs text-slate-500">Tokens</div>
+              <div className="text-xs text-slate-500">Токены</div>
             </div>
             <div>
               <div className="text-xl font-bold text-white">
                 ${session.metrics.totalCost.toFixed(3)}
               </div>
-              <div className="text-xs text-slate-500">Cost</div>
+              <div className="text-xs text-slate-500">Стоимость</div>
             </div>
             <div>
               <div className="text-xl font-bold text-white">
                 {session.analyses.length}
               </div>
-              <div className="text-xs text-slate-500">Agents</div>
+              <div className="text-xs text-slate-500">Агенты</div>
             </div>
           </div>
         </CardContent>

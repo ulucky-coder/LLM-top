@@ -39,9 +39,9 @@ function WelcomeScreen() {
     <div className="flex-1 flex items-center justify-center">
       <div className="text-center max-w-md px-4">
         <div className="text-6xl mb-6">◈</div>
-        <h2 className="text-2xl font-bold text-white mb-3">Welcome to LLM-top</h2>
+        <h2 className="text-2xl font-bold text-white mb-3">Добро пожаловать в LLM-top</h2>
         <p className="text-slate-400 mb-6 leading-relaxed">
-          Multi-agent analytical system combining multiple LLMs for expert-level results.
+          Мульти-агентная аналитическая система, объединяющая несколько LLM для экспертных результатов.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button
@@ -49,16 +49,16 @@ function WelcomeScreen() {
             className="bg-violet-600 hover:bg-violet-500"
           >
             <Sparkles className="h-4 w-4 mr-2" />
-            New Analysis
+            Новый анализ
           </Button>
           <Button variant="outline" className="border-slate-700 hover:bg-slate-800">
             <kbd className="mr-2 text-xs opacity-70">⌘K</kbd>
-            Command Palette
+            Командная палитра
           </Button>
         </div>
         <div className="mt-8 flex justify-center gap-8 text-xs text-slate-500">
-          <span>Press <kbd className="px-1.5 py-0.5 bg-slate-800 rounded">N</kbd> for new session</span>
-          <span>Press <kbd className="px-1.5 py-0.5 bg-slate-800 rounded">1-4</kbd> to switch modes</span>
+          <span>Нажмите <kbd className="px-1.5 py-0.5 bg-slate-800 rounded">N</kbd> для новой сессии</span>
+          <span>Нажмите <kbd className="px-1.5 py-0.5 bg-slate-800 rounded">1-4</kbd> для смены режима</span>
         </div>
       </div>
     </div>

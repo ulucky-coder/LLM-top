@@ -14,7 +14,7 @@ function LoadingFallback() {
     <div className="flex-1 flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
-        <span className="text-sm text-slate-400">Loading...</span>
+        <span className="text-sm text-slate-400">Загрузка...</span>
       </div>
     </div>
   );

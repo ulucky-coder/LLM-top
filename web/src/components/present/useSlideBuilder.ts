@@ -29,9 +29,9 @@ export function useSlideBuilder(session: Session | null): Slide[] {
   slides.push({
     id: "input",
     type: "input",
-    title: "Analysis Task",
+    title: "Задача анализа",
     content: session.task,
-    notes: "This is the original task that was analyzed by the agents.",
+    notes: "Исходная задача, проанализированная агентами.",
   });
 
   // 3. Agent slides (1 per agent)
@@ -53,7 +53,7 @@ export function useSlideBuilder(session: Session | null): Slide[] {
         keyPoints: analysis.key_points.slice(0, 5),
         risks: analysis.risks.slice(0, 3),
       },
-      notes: `Agent confidence: ${Math.round(analysis.confidence * 100)}%. Duration: ${analysis.duration?.toFixed(1)}s. Tokens: ${analysis.tokens?.toLocaleString()}.`,
+      notes: `Уверенность агента: ${Math.round(analysis.confidence * 100)}%. Время: ${analysis.duration?.toFixed(1)}с. Токенов: ${analysis.tokens?.toLocaleString()}.`,
     });
   });
 
@@ -62,13 +62,13 @@ export function useSlideBuilder(session: Session | null): Slide[] {
     slides.push({
       id: "consensus",
       type: "consensus",
-      title: "Consensus Analysis",
-      subtitle: `${Math.round(session.metrics.consensus * 100)}% Agreement`,
+      title: "Анализ консенсуса",
+      subtitle: `${Math.round(session.metrics.consensus * 100)}% согласие`,
       data: {
         analyses: session.analyses,
         consensus: session.metrics.consensus,
       },
-      notes: "Shows the agreement level between all agents on key points.",
+      notes: "Показывает уровень согласия между агентами по ключевым вопросам.",
     });
   }
 
@@ -77,9 +77,9 @@ export function useSlideBuilder(session: Session | null): Slide[] {
     slides.push({
       id: "synthesis",
       type: "synthesis",
-      title: "Synthesis",
+      title: "Синтез",
       content: session.synthesis.summary,
-      notes: "Combined analysis from all agents.",
+      notes: "Объединённый анализ от всех агентов.",
     });
   }
 
@@ -90,33 +90,33 @@ export function useSlideBuilder(session: Session | null): Slide[] {
       slides.push({
         id: "conclusions",
         type: "conclusion",
-        title: "Conclusions",
+        title: "Выводы",
         data: {
           conclusions: session.synthesis.conclusions,
         },
-        notes: `${session.synthesis.conclusions.length} key conclusions identified.`,
+        notes: `Выявлено ${session.synthesis.conclusions.length} ключевых выводов.`,
       });
     } else {
       // Show first 3 conclusions in first slide, rest in second
       slides.push({
         id: "conclusions-1",
         type: "conclusion",
-        title: "Key Conclusions",
+        title: "Ключевые выводы",
         data: {
           conclusions: session.synthesis.conclusions.slice(0, 3),
         },
-        notes: "Primary conclusions from the analysis.",
+        notes: "Основные выводы анализа.",
       });
 
       if (session.synthesis.conclusions.length > 3) {
         slides.push({
           id: "conclusions-2",
           type: "conclusion",
-          title: "Additional Conclusions",
+          title: "Дополнительные выводы",
           data: {
             conclusions: session.synthesis.conclusions.slice(3),
           },
-          notes: "Additional conclusions from the analysis.",
+          notes: "Дополнительные выводы анализа.",
         });
       }
     }
@@ -127,11 +127,11 @@ export function useSlideBuilder(session: Session | null): Slide[] {
     slides.push({
       id: "recommendations",
       type: "recommendation",
-      title: "Recommendations",
+      title: "Рекомендации",
       data: {
         recommendations: session.synthesis.recommendations,
       },
-      notes: `${session.synthesis.recommendations.length} recommendations provided.`,
+      notes: `Предоставлено ${session.synthesis.recommendations.length} рекомендаций.`,
     });
   }
 

@@ -26,7 +26,7 @@ function AgentInspector({ agentId }: { agentId: string }) {
   ) || [];
 
   if (!agent) {
-    return <div className="p-4 text-slate-400">Agent not found</div>;
+    return <div className="p-4 text-slate-400">Агент не найден</div>;
   }
 
   const toggleSection = (section: keyof typeof expandedSections) => {
@@ -69,22 +69,22 @@ function AgentInspector({ agentId }: { agentId: string }) {
           <>
             {/* Status Section */}
             <div className="p-4 border-b border-slate-800">
-              <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-3">Status</h4>
+              <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-3">Статус</h4>
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <span className="text-slate-500">Duration</span>
-                  <p className="text-white">{analysis.duration?.toFixed(2) || "—"}s</p>
+                  <span className="text-slate-500">Время</span>
+                  <p className="text-white">{analysis.duration?.toFixed(2) || "—"}с</p>
                 </div>
                 <div>
-                  <span className="text-slate-500">Tokens</span>
+                  <span className="text-slate-500">Токены</span>
                   <p className="text-white">{analysis.tokens?.toLocaleString() || "—"}</p>
                 </div>
                 <div>
-                  <span className="text-slate-500">Cost</span>
+                  <span className="text-slate-500">Стоимость</span>
                   <p className="text-white">${analysis.cost?.toFixed(4) || "—"}</p>
                 </div>
                 <div>
-                  <span className="text-slate-500">Confidence</span>
+                  <span className="text-slate-500">Уверенность</span>
                   <p className="text-white">{Math.round(analysis.confidence * 100)}%</p>
                 </div>
               </div>
@@ -93,7 +93,7 @@ function AgentInspector({ agentId }: { agentId: string }) {
             {/* Key Points */}
             {analysis.key_points && analysis.key_points.length > 0 && (
               <div className="p-4 border-b border-slate-800">
-                <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-3">Key Points</h4>
+                <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-3">Ключевые моменты</h4>
                 <ul className="space-y-2">
                   {analysis.key_points.map((point, i) => (
                     <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
@@ -108,7 +108,7 @@ function AgentInspector({ agentId }: { agentId: string }) {
             {/* Risks */}
             {analysis.risks && analysis.risks.length > 0 && (
               <div className="p-4 border-b border-slate-800">
-                <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-3">Risks Identified</h4>
+                <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-3">Выявленные риски</h4>
                 <ul className="space-y-2">
                   {analysis.risks.map((risk, i) => (
                     <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
@@ -127,7 +127,7 @@ function AgentInspector({ agentId }: { agentId: string }) {
                   onClick={() => toggleSection("critique")}
                   className="w-full flex items-center justify-between text-xs text-slate-500 uppercase tracking-wider mb-3"
                 >
-                  <span>Critique Received</span>
+                  <span>Полученная критика</span>
                   {expandedSections.critique ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
                 </button>
                 {expandedSections.critique && (
@@ -139,7 +139,7 @@ function AgentInspector({ agentId }: { agentId: string }) {
                       return (
                         <div key={i} className="bg-slate-800/50 rounded-lg p-3">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm text-slate-300">From {criticAgent?.name || critique.critic}</span>
+                            <span className="text-sm text-slate-300">От {criticAgent?.name || critique.critic}</span>
                             <Badge variant="outline" className={cn(
                               "text-xs",
                               critique.score >= 8 ? "border-emerald-500 text-emerald-400" :
@@ -163,7 +163,7 @@ function AgentInspector({ agentId }: { agentId: string }) {
                 onClick={() => toggleSection("output")}
                 className="w-full flex items-center justify-between text-xs text-slate-500 uppercase tracking-wider mb-3"
               >
-                <span>Full Output</span>
+                <span>Полный вывод</span>
                 {expandedSections.output ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
               </button>
               {expandedSections.output && (
@@ -175,8 +175,8 @@ function AgentInspector({ agentId }: { agentId: string }) {
           </>
         ) : (
           <div className="p-4 text-center text-slate-400">
-            <p>No analysis data yet</p>
-            <p className="text-xs text-slate-500 mt-1">Start an analysis to see results</p>
+            <p>Данные анализа пока отсутствуют</p>
+            <p className="text-xs text-slate-500 mt-1">Запустите анализ, чтобы увидеть результаты</p>
           </div>
         )}
       </div>
@@ -186,19 +186,19 @@ function AgentInspector({ agentId }: { agentId: string }) {
         <div className="grid grid-cols-2 gap-2">
           <Button variant="outline" size="sm" className="text-xs border-slate-700 text-slate-300">
             <RefreshCw className="h-3 w-3 mr-1" />
-            Regenerate
+            Перегенерировать
           </Button>
           <Button variant="outline" size="sm" className="text-xs border-slate-700 text-slate-300">
             <Copy className="h-3 w-3 mr-1" />
-            Copy
+            Копировать
           </Button>
           <Button variant="outline" size="sm" className="text-xs border-slate-700 text-slate-300">
             <Edit className="h-3 w-3 mr-1" />
-            Edit Prompt
+            Редактировать
           </Button>
           <Button variant="outline" size="sm" className="text-xs border-slate-700 text-slate-300">
             <BarChart3 className="h-3 w-3 mr-1" />
-            Compare
+            Сравнить
           </Button>
         </div>
       </div>
@@ -216,10 +216,10 @@ export function Drawer() {
       {/* Header */}
       <div className="h-12 flex items-center justify-between px-4 border-b border-slate-800">
         <h2 className="text-sm font-medium text-white uppercase tracking-wider">
-          {drawerContent === "agent" ? "Agent Inspector" :
-           drawerContent === "critique" ? "Critique Details" :
-           drawerContent === "settings" ? "Settings" :
-           drawerContent === "export" ? "Export" : "Details"}
+          {drawerContent === "agent" ? "Инспектор агента" :
+           drawerContent === "critique" ? "Детали критики" :
+           drawerContent === "settings" ? "Настройки" :
+           drawerContent === "export" ? "Экспорт" : "Детали"}
         </h2>
         <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-white" onClick={closeDrawer}>
           <X className="h-4 w-4" />
@@ -232,13 +232,13 @@ export function Drawer() {
           <AgentInspector agentId={drawerData.agentId} />
         )}
         {drawerContent === "critique" && (
-          <div className="p-4 text-slate-400">Critique details coming soon</div>
+          <div className="p-4 text-slate-400">Детали критики скоро будут доступны</div>
         )}
         {drawerContent === "settings" && (
-          <div className="p-4 text-slate-400">Settings panel coming soon</div>
+          <div className="p-4 text-slate-400">Панель настроек скоро будет доступна</div>
         )}
         {drawerContent === "export" && (
-          <div className="p-4 text-slate-400">Export options coming soon</div>
+          <div className="p-4 text-slate-400">Опции экспорта скоро будут доступны</div>
         )}
       </div>
     </aside>

@@ -42,7 +42,7 @@ export function ExportToolbar() {
   return (
     <div className="sticky top-0 z-10 bg-slate-950/90 backdrop-blur-sm border-b border-slate-800 px-4 lg:px-8 py-3">
       <div className="max-w-3xl mx-auto flex items-center justify-between">
-        <span className="text-sm text-slate-400">Document Mode</span>
+        <span className="text-sm text-slate-400">Режим документа</span>
 
         <div className="flex items-center gap-2">
           <Button
@@ -54,12 +54,12 @@ export function ExportToolbar() {
             {copied ? (
               <>
                 <Check className="h-4 w-4 mr-2 text-emerald-400" />
-                Copied
+                Скопировано
               </>
             ) : (
               <>
                 <Copy className="h-4 w-4 mr-2" />
-                Copy
+                Копировать
               </>
             )}
           </Button>
@@ -68,7 +68,7 @@ export function ExportToolbar() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="border-slate-700">
                 <Download className="h-4 w-4 mr-2" />
-                Export
+                Экспорт
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-slate-900 border-slate-700">
@@ -83,7 +83,7 @@ export function ExportToolbar() {
               <DropdownMenuSeparator className="bg-slate-700" />
               <DropdownMenuItem onClick={print} className="text-slate-300 hover:text-white hover:bg-slate-800">
                 <Printer className="h-4 w-4 mr-2" />
-                Print
+                Печать
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

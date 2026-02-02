@@ -18,7 +18,7 @@ export function AgentCardsGrid({ analyses, onAgentClick, compact = false }: Agen
   if (analyses.length === 0) {
     return (
       <div className="text-center py-8 text-slate-500">
-        No analyses available yet
+        Анализы пока недоступны
       </div>
     );
   }
@@ -97,7 +97,7 @@ function AgentCard({ analysis, agent, onClick, compact }: AgentCardProps) {
         {/* Confidence Bar */}
         <div className="mb-3">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-slate-400">Confidence</span>
+            <span className="text-xs text-slate-400">Уверенность</span>
             <span className={cn("text-sm font-semibold", confidenceColor)}>{confidencePercent}%</span>
           </div>
           <Progress value={confidencePercent} className="h-2" />
@@ -114,7 +114,7 @@ function AgentCard({ analysis, agent, onClick, compact }: AgentCardProps) {
               ))}
               {analysis.key_points.length > 2 && (
                 <li className="text-xs text-slate-500">
-                  +{analysis.key_points.length - 2} more
+                  +{analysis.key_points.length - 2} ещё
                 </li>
               )}
             </ul>
@@ -146,7 +146,7 @@ function AgentCard({ analysis, agent, onClick, compact }: AgentCardProps) {
         {/* Risks Badge */}
         {analysis.risks.length > 0 && (
           <Badge variant="outline" className="mt-2 border-amber-500/50 text-amber-400 text-xs">
-            {analysis.risks.length} risk{analysis.risks.length !== 1 ? "s" : ""} identified
+            {analysis.risks.length} рисков выявлено
           </Badge>
         )}
       </CardContent>

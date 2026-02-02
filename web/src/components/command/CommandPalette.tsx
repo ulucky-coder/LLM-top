@@ -37,13 +37,13 @@ export function CommandPalette() {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const commands: Command[] = useMemo(() => [
-    // Sessions
+    // Сессии
     {
       id: "new-session",
-      label: "New Analysis Session",
-      description: "Create new analysis session",
+      label: "Новая сессия анализа",
+      description: "Создать новую сессию",
       shortcut: "N",
-      category: "Sessions",
+      category: "Сессии",
       icon: <Plus className="h-4 w-4" />,
       action: () => {
         createSession();
@@ -52,10 +52,10 @@ export function CommandPalette() {
     },
     {
       id: "search-sessions",
-      label: "Search Sessions",
-      description: "Find past sessions by keyword",
+      label: "Поиск сессий",
+      description: "Найти сессии по ключевому слову",
       shortcut: "/",
-      category: "Sessions",
+      category: "Сессии",
       icon: <Search className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
@@ -63,22 +63,22 @@ export function CommandPalette() {
     },
     {
       id: "compare-sessions",
-      label: "Compare Sessions",
-      description: "Side-by-side comparison",
+      label: "Сравнить сессии",
+      description: "Сравнение бок о бок",
       shortcut: "C",
-      category: "Sessions",
+      category: "Сессии",
       icon: <GitCompare className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
       },
     },
-    // Actions
+    // Действия
     {
       id: "export",
-      label: "Export Current Session",
-      description: "Export as MD, PDF, JSON, CSV",
+      label: "Экспорт текущей сессии",
+      description: "Экспорт в MD, PDF, JSON, CSV",
       shortcut: "E",
-      category: "Actions",
+      category: "Действия",
       icon: <Download className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
@@ -86,10 +86,10 @@ export function CommandPalette() {
     },
     {
       id: "duplicate",
-      label: "Duplicate Session",
-      description: "Clone with modifications",
+      label: "Дублировать сессию",
+      description: "Клонировать с изменениями",
       shortcut: "D",
-      category: "Actions",
+      category: "Действия",
       icon: <Copy className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
@@ -97,22 +97,22 @@ export function CommandPalette() {
     },
     {
       id: "rerun",
-      label: "Re-run Analysis",
-      description: "Same input, fresh run",
+      label: "Перезапустить анализ",
+      description: "Тот же ввод, новый запуск",
       shortcut: "R",
-      category: "Actions",
+      category: "Действия",
       icon: <RefreshCw className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
       },
     },
-    // Configuration
+    // Настройки
     {
       id: "edit-prompts",
-      label: "Edit Agent Prompts",
-      description: "Customize system prompts",
+      label: "Редактировать промпты",
+      description: "Настроить системные промпты",
       shortcut: "P",
-      category: "Configuration",
+      category: "Настройки",
       icon: <Edit className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
@@ -120,10 +120,10 @@ export function CommandPalette() {
     },
     {
       id: "thinking-patterns",
-      label: "Manage Thinking Patterns",
-      description: "Add/remove patterns",
+      label: "Паттерны мышления",
+      description: "Добавить/удалить паттерны",
       shortcut: "T",
-      category: "Configuration",
+      category: "Настройки",
       icon: <Brain className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
@@ -131,10 +131,10 @@ export function CommandPalette() {
     },
     {
       id: "agent-settings",
-      label: "Agent Settings",
-      description: "Models, temperature",
+      label: "Настройки агентов",
+      description: "Модели, температура",
       shortcut: "A",
-      category: "Configuration",
+      category: "Настройки",
       icon: <Settings className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
@@ -142,22 +142,22 @@ export function CommandPalette() {
     },
     {
       id: "cost-dashboard",
-      label: "View Cost Dashboard",
-      description: "Usage and spending",
+      label: "Панель расходов",
+      description: "Использование и затраты",
       shortcut: "$",
-      category: "Configuration",
+      category: "Настройки",
       icon: <DollarSign className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
       },
     },
-    // Navigation
+    // Навигация
     {
       id: "go-input",
-      label: "Go to Input",
-      description: "Jump to task input",
+      label: "К вводу задачи",
+      description: "Перейти к вводу",
       shortcut: "⌘I",
-      category: "Navigation",
+      category: "Навигация",
       icon: <ArrowRight className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
@@ -165,22 +165,22 @@ export function CommandPalette() {
     },
     {
       id: "go-synthesis",
-      label: "Go to Synthesis",
-      description: "Jump to final results",
+      label: "К синтезу",
+      description: "Перейти к итогам",
       shortcut: "⌘S",
-      category: "Navigation",
+      category: "Навигация",
       icon: <Zap className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
       },
     },
-    // Help
+    // Справка
     {
       id: "shortcuts",
-      label: "Keyboard Shortcuts",
-      description: "Show all shortcuts",
+      label: "Горячие клавиши",
+      description: "Показать все сочетания",
       shortcut: "?",
-      category: "Help",
+      category: "Справка",
       icon: <HelpCircle className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
@@ -188,10 +188,10 @@ export function CommandPalette() {
     },
     {
       id: "docs",
-      label: "Documentation",
-      description: "Open docs",
+      label: "Документация",
+      description: "Открыть документацию",
       shortcut: "F1",
-      category: "Help",
+      category: "Справка",
       icon: <FileText className="h-4 w-4" />,
       action: () => {
         closeCommandPalette();
@@ -273,7 +273,7 @@ export function CommandPalette() {
             <Search className="h-5 w-5 text-slate-400" />
             <input
               type="text"
-              placeholder="Type a command or search..."
+              placeholder="Введите команду или поиск..."
               className="flex-1 bg-transparent text-white placeholder:text-slate-500 outline-none text-sm"
               value={commandQuery}
               onChange={(e) => setCommandQuery(e.target.value)}
@@ -326,18 +326,18 @@ export function CommandPalette() {
 
             {filteredCommands.length === 0 && (
               <div className="px-4 py-8 text-center text-slate-500">
-                No commands found
+                Команды не найдены
               </div>
             )}
           </div>
 
           {/* Footer */}
           <div className="px-4 py-2 border-t border-slate-700 flex items-center justify-between text-xs text-slate-500">
-            <span>Type to search...</span>
+            <span>Введите для поиска...</span>
             <div className="flex items-center gap-2">
-              <span>↑↓ Navigate</span>
-              <span>↵ Select</span>
-              <span>Esc Close</span>
+              <span>↑↓ Навигация</span>
+              <span>↵ Выбор</span>
+              <span>Esc Закрыть</span>
             </div>
           </div>
         </div>

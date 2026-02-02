@@ -30,7 +30,7 @@ export function DiffHighlighter({ sessionA, sessionB, showDiff }: DiffHighlighte
     // Compare consensus
     const consensusDiff = sessionB.metrics.consensus - sessionA.metrics.consensus;
     results.push({
-      field: "Consensus",
+      field: "Консенсус",
       valueA: Math.round(sessionA.metrics.consensus * 100),
       valueB: Math.round(sessionB.metrics.consensus * 100),
       change: consensusDiff > 0.01 ? "increase" : consensusDiff < -0.01 ? "decrease" : "same",
@@ -40,7 +40,7 @@ export function DiffHighlighter({ sessionA, sessionB, showDiff }: DiffHighlighte
     // Compare total cost
     const costDiff = sessionB.metrics.totalCost - sessionA.metrics.totalCost;
     results.push({
-      field: "Total Cost",
+      field: "Стоимость",
       valueA: sessionA.metrics.totalCost,
       valueB: sessionB.metrics.totalCost,
       change: costDiff > 0.001 ? "increase" : costDiff < -0.001 ? "decrease" : "same",
@@ -50,7 +50,7 @@ export function DiffHighlighter({ sessionA, sessionB, showDiff }: DiffHighlighte
     const conclusionsA = sessionA.synthesis?.conclusions.length || 0;
     const conclusionsB = sessionB.synthesis?.conclusions.length || 0;
     results.push({
-      field: "Conclusions",
+      field: "Выводы",
       valueA: conclusionsA,
       valueB: conclusionsB,
       change: conclusionsB > conclusionsA ? "increase" : conclusionsB < conclusionsA ? "decrease" : "same",
@@ -60,7 +60,7 @@ export function DiffHighlighter({ sessionA, sessionB, showDiff }: DiffHighlighte
     const recsA = sessionA.synthesis?.recommendations.length || 0;
     const recsB = sessionB.synthesis?.recommendations.length || 0;
     results.push({
-      field: "Recommendations",
+      field: "Рекомендации",
       valueA: recsA,
       valueB: recsB,
       change: recsB > recsA ? "increase" : recsB < recsA ? "decrease" : "same",
@@ -75,7 +75,7 @@ export function DiffHighlighter({ sessionA, sessionB, showDiff }: DiffHighlighte
     <div className="p-4 bg-slate-900/50 border border-slate-800 rounded-lg mb-4">
       <h3 className="text-sm font-medium text-slate-400 mb-3 flex items-center gap-2">
         <AlertTriangle className="h-4 w-4" />
-        Differences Detected
+        Обнаружены различия
       </h3>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -111,9 +111,9 @@ function DiffBadge({ diff }: { diff: DiffResult }) {
       <div className="text-sm">
         {typeof diff.valueA === "number" && typeof diff.valueB === "number" ? (
           <>
-            {diff.field === "Total Cost" ? (
+            {diff.field === "Стоимость" ? (
               <span>${diff.valueA.toFixed(3)} → ${diff.valueB.toFixed(3)}</span>
-            ) : diff.field === "Consensus" ? (
+            ) : diff.field === "Консенсус" ? (
               <span>{diff.valueA}% → {diff.valueB}%</span>
             ) : (
               <span>{diff.valueA} → {diff.valueB}</span>

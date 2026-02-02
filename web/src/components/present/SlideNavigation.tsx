@@ -46,7 +46,7 @@ export function SlideNavigation({
                 ? "w-6 bg-violet-500"
                 : "bg-slate-600 hover:bg-slate-500"
             )}
-            title={`Slide ${i + 1}`}
+            title={`Слайд ${i + 1}`}
           />
         ))}
       </div>

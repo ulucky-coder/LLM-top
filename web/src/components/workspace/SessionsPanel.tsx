@@ -26,7 +26,7 @@ export function SessionsPanel() {
           className="w-full bg-violet-600 hover:bg-violet-500 justify-start"
         >
           <Plus className="h-4 w-4 mr-2" />
-          New Session
+          Новая сессия
         </Button>
       </div>
 
@@ -34,7 +34,7 @@ export function SessionsPanel() {
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {sessions.length === 0 && !currentSession && (
           <div className="text-center py-8 text-slate-500 text-sm">
-            No sessions yet
+            Сессий пока нет
           </div>
         )}
 
@@ -62,7 +62,7 @@ export function SessionsPanel() {
 
       {/* Footer */}
       <div className="p-3 border-t border-slate-800 text-xs text-slate-500">
-        {sessions.length + (currentSession ? 1 : 0)} session{sessions.length !== 1 ? "s" : ""}
+        {sessions.length + (currentSession ? 1 : 0)} сессий
       </div>
     </div>
   );
@@ -111,7 +111,7 @@ function SessionCard({ session, isActive, onSelect, onDelete }: SessionCardProps
             </span>
           </div>
           <p className="text-xs text-slate-400 truncate">
-            {session.task || "No task defined"}
+            {session.task || "Задача не определена"}
           </p>
         </div>
         <Badge variant="outline" className="text-xs shrink-0 capitalize">

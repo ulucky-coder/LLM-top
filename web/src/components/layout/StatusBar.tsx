@@ -23,9 +23,9 @@ export function StatusBar() {
   if (!currentSession) {
     return (
       <footer className="h-8 border-t border-slate-800 bg-slate-950/80 flex items-center px-4 text-xs text-slate-500">
-        <span>Ready</span>
+        <span>Готов</span>
         <span className="mx-2">•</span>
-        <span className="text-slate-600">{currentModeInfo?.label} Mode</span>
+        <span className="text-slate-600">Режим: {currentModeInfo?.label}</span>
       </footer>
     );
   }
@@ -62,7 +62,7 @@ export function StatusBar() {
             isComplete && "text-emerald-400",
             !isRunning && !isPaused && !isComplete && "text-slate-400"
           )}>
-            {isComplete ? "Complete" : isPaused ? "Paused" : isRunning ? `Iteration ${currentIteration}/${settings.maxIterations}` : "Ready"}
+            {isComplete ? "Завершено" : isPaused ? "Пауза" : isRunning ? `Итерация ${currentIteration}/${settings.maxIterations}` : "Готов"}
           </span>
         </div>
 
@@ -136,7 +136,7 @@ export function StatusBar() {
                 onClick={pauseAnalysis}
               >
                 <Pause className="h-3 w-3 mr-1" />
-                Pause
+                Пауза
               </Button>
             ) : (
               <Button
@@ -145,7 +145,7 @@ export function StatusBar() {
                 className="h-6 px-2 text-xs text-amber-400 hover:text-amber-300"
                 onClick={resumeAnalysis}
               >
-                Resume
+                Продолжить
               </Button>
             )}
             <Button
@@ -166,9 +166,9 @@ export function StatusBar() {
           <div className="relative">
             <Progress value={progressPercent} className="h-1" />
             <div className="absolute top-2 left-0 right-0 flex justify-between text-[10px] text-slate-500">
-              <span className={analyses.length > 0 ? "text-emerald-400" : ""}>Analysis</span>
-              <span>Critique</span>
-              <span>Synthesis</span>
+              <span className={analyses.length > 0 ? "text-emerald-400" : ""}>Анализ</span>
+              <span>Критика</span>
+              <span>Синтез</span>
             </div>
           </div>
         </div>

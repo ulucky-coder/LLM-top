@@ -19,7 +19,7 @@ export function SpeakerNotes({ slide, visible, onClose }: SpeakerNotesProps) {
         <div className="flex items-center justify-between mb-2">
           <h4 className="text-sm font-medium text-slate-400 flex items-center gap-2">
             <FileText className="h-4 w-4" />
-            Speaker Notes
+            Заметки спикера
           </h4>
           <button
             onClick={onClose}
@@ -29,7 +29,7 @@ export function SpeakerNotes({ slide, visible, onClose }: SpeakerNotesProps) {
           </button>
         </div>
         <p className="text-slate-300">
-          {slide.notes || "No notes for this slide."}
+          {slide.notes || "Нет заметок для этого слайда."}
         </p>
       </div>
     </div>

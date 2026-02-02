@@ -26,12 +26,12 @@ export function SessionSelector({ value, onChange, excludeId, label }: SessionSe
       <label className="text-sm text-slate-400 mb-2 block">{label}</label>
       <Select value={value || ""} onValueChange={(v) => onChange(v || null)}>
         <SelectTrigger className="bg-slate-950 border-slate-700 text-white">
-          <SelectValue placeholder="Select a session" />
+          <SelectValue placeholder="Выберите сессию" />
         </SelectTrigger>
         <SelectContent className="bg-slate-900 border-slate-700 max-h-60">
           {allSessions.length === 0 ? (
             <div className="p-4 text-center text-slate-500 text-sm">
-              No completed sessions available
+              Нет завершённых сессий
             </div>
           ) : (
             allSessions.map((session) => (

@@ -157,7 +157,7 @@ export function Sidebar() {
       {/* Current Session */}
       {currentSession && (
         <div className="p-4 border-b border-slate-800">
-          <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">Current Session</div>
+          <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">Текущая сессия</div>
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm font-medium text-white">
@@ -175,7 +175,7 @@ export function Sidebar() {
           {currentSession.status === "running" && (
             <div className="mt-2 flex items-center gap-2 text-xs text-amber-400">
               <Loader2 className="h-3 w-3 animate-spin" />
-              Iteration {currentSession.currentIteration}/{currentSession.settings.maxIterations}
+              Итерация {currentSession.currentIteration}/{currentSession.settings.maxIterations}
             </div>
           )}
         </div>
@@ -183,7 +183,7 @@ export function Sidebar() {
 
       {/* Timeline */}
       <div className="flex-1 overflow-y-auto p-4">
-        <div className="text-xs text-slate-500 uppercase tracking-wider mb-3">Timeline</div>
+        <div className="text-xs text-slate-500 uppercase tracking-wider mb-3">Хронология</div>
 
         {currentSession && currentSession.timeline.length > 0 ? (
           <div className="space-y-0">
@@ -197,7 +197,7 @@ export function Sidebar() {
           </div>
         ) : (
           <div className="text-sm text-slate-500 text-center py-8">
-            No events yet
+            Пока нет событий
           </div>
         )}
       </div>
@@ -211,7 +211,7 @@ export function Sidebar() {
         >
           <span className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-slate-500" />
-            History
+            История
           </span>
           {expandedSections.history ? (
             <ChevronDown className="h-4 w-4 text-slate-500" />
@@ -231,7 +231,7 @@ export function Sidebar() {
                 </div>
               ))
             ) : (
-              <div className="text-xs text-slate-500">No history</div>
+              <div className="text-xs text-slate-500">Нет истории</div>
             )}
           </div>
         )}
@@ -243,7 +243,7 @@ export function Sidebar() {
         >
           <span className="flex items-center gap-2">
             <FileText className="h-4 w-4 text-slate-500" />
-            Templates
+            Шаблоны
           </span>
           <ChevronRight className={cn("h-4 w-4 text-slate-500 transition-transform", expandedSections.templates && "rotate-90")} />
         </button>
@@ -255,7 +255,7 @@ export function Sidebar() {
         >
           <span className="flex items-center gap-2">
             <Brain className="h-4 w-4 text-slate-500" />
-            Thinking Patterns
+            Паттерны мышления
           </span>
           <ChevronRight className={cn("h-4 w-4 text-slate-500 transition-transform", expandedSections.patterns && "rotate-90")} />
         </button>
@@ -263,22 +263,22 @@ export function Sidebar() {
 
       {/* Quick Actions */}
       <div className="p-4 border-t border-slate-800 space-y-1">
-        <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">Quick Actions</div>
+        <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">Быстрые действия</div>
         <button className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded">
           <kbd className="w-5 text-center text-xs text-slate-500">[N]</kbd>
-          <span>New session</span>
+          <span>Новая сессия</span>
         </button>
         <button className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded">
           <kbd className="w-5 text-center text-xs text-slate-500">[E]</kbd>
-          <span>Export</span>
+          <span>Экспорт</span>
         </button>
         <button className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded">
           <kbd className="w-5 text-center text-xs text-slate-500">[C]</kbd>
-          <span>Compare</span>
+          <span>Сравнить</span>
         </button>
         <button className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded">
           <kbd className="w-5 text-center text-xs text-slate-500">[?]</kbd>
-          <span>Shortcuts</span>
+          <span>Горячие клавиши</span>
         </button>
       </div>
     </aside>
