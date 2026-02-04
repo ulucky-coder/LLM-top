@@ -29,7 +29,7 @@ export type TaskType = typeof TASK_TYPES[number]["value"];
 export type AgentId = typeof AGENTS[number]["id"];
 
 // API configuration
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
 
 // Default settings
 export const DEFAULT_SETTINGS = {

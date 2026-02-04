@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { supabase, saveSettings, loadAllSettings } from "@/lib/supabase";
 
 // Types
 export interface ThinkingPattern {
@@ -57,6 +58,12 @@ interface PromptState {
 
   // Reset
   resetToDefaults: () => void;
+
+  // Supabase sync
+  syncToSupabase: (userId?: string) => Promise<boolean>;
+  loadFromSupabase: (userId?: string) => Promise<boolean>;
+  isSyncing: boolean;
+  lastSyncedAt: Date | null;
 }
 
 // Default thinking patterns with detailed prompts
@@ -472,6 +479,71 @@ export const usePromptStore = create<PromptState>()(
           agentConfigs: DEFAULT_AGENT_CONFIGS,
           synthesisPrompt: DEFAULT_SYNTHESIS_PROMPT,
         });
+      },
+
+      // Supabase sync
+      isSyncing: false,
+      lastSyncedAt: null,
+
+      syncToSupabase: async (userId = "default") => {
+        const state = get();
+        set({ isSyncing: true });
+
+        try {
+          const allData = {
+            thinkingPatterns: state.thinkingPatterns,
+            agentPrompts: state.agentPrompts,
+            agentConfigs: state.agentConfigs,
+            synthesisPrompt: state.synthesisPrompt,
+          };
+
+          const success = await saveSettings(userId, "all", allData);
+
+          if (success) {
+            set({ lastSyncedAt: new Date() });
+          }
+
+          return success;
+        } catch (error) {
+          console.error("Error syncing to Supabase:", error);
+          return false;
+        } finally {
+          set({ isSyncing: false });
+        }
+      },
+
+      loadFromSupabase: async (userId = "default") => {
+        set({ isSyncing: true });
+
+        try {
+          const data = await loadAllSettings(userId);
+
+          if (data?.all) {
+            const settings = data.all as {
+              thinkingPatterns?: ThinkingPattern[];
+              agentPrompts?: Record<string, AgentPrompts>;
+              agentConfigs?: AgentConfig[];
+              synthesisPrompt?: string;
+            };
+
+            set({
+              thinkingPatterns: settings.thinkingPatterns || DEFAULT_THINKING_PATTERNS,
+              agentPrompts: settings.agentPrompts || DEFAULT_AGENT_PROMPTS,
+              agentConfigs: settings.agentConfigs || DEFAULT_AGENT_CONFIGS,
+              synthesisPrompt: settings.synthesisPrompt || DEFAULT_SYNTHESIS_PROMPT,
+              lastSyncedAt: new Date(),
+            });
+
+            return true;
+          }
+
+          return false;
+        } catch (error) {
+          console.error("Error loading from Supabase:", error);
+          return false;
+        } finally {
+          set({ isSyncing: false });
+        }
       },
     }),
     {
