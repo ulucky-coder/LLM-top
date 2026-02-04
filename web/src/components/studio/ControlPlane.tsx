@@ -8,6 +8,7 @@ import { DatabaseStudio } from "./DatabaseStudio";
 import { MonitoringDashboard } from "./MonitoringDashboard";
 import { ExperimentPanel } from "./ExperimentPanel";
 import { ConfigManager } from "./ConfigManager";
+import { CollaborationBar } from "./CollaborationBar";
 import {
   Home,
   FileCode,
@@ -122,6 +123,12 @@ export function ControlPlane({ onClose }: { onClose?: () => void }) {
           )}
         </div>
       </div>
+
+      {/* Collaboration Bar */}
+      <CollaborationBar
+        currentTab={activeTab}
+        onLog={addConsoleLog}
+      />
 
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
