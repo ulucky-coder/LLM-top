@@ -50,3 +50,6 @@ coverage/
 .bot.pid
 .claude/
 .server.pid
+
+# Screenshots
+SCREEN_l/
