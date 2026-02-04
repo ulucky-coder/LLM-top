@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { TaskType, AgentId, DEFAULT_SETTINGS } from "@/lib/constants";
+import { generateUUID } from "@/lib/utils";
 
 // Types
 export interface AgentAnalysis {
@@ -144,7 +145,7 @@ interface SessionState {
 }
 
 const createEmptySession = (): Session => ({
-  id: crypto.randomUUID(),
+  id: generateUUID(),
   status: "input",
   task: "",
   taskType: "strategy",
@@ -287,7 +288,7 @@ export const useSessionStore = create<SessionState>()(
             ...state.currentSession,
             timeline: [
               ...state.currentSession.timeline,
-              { ...event, id: crypto.randomUUID() },
+              { ...event, id: generateUUID() },
             ],
             updatedAt: new Date(),
           }
@@ -366,7 +367,7 @@ export const useSessionStore = create<SessionState>()(
             notes: [
               ...state.currentSession.notes,
               {
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 content,
                 timestamp: new Date(),
                 position,
