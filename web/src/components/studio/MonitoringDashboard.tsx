@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,14 @@ import {
   Loader2,
   Cloud,
   CloudOff,
+  Radio,
+  WifiOff,
 } from "lucide-react";
+import {
+  useRealtimeEvents,
+  MetricEventData,
+  LogEventData,
+} from "@/hooks/useRealtimeEvents";
 
 interface MetricCardProps {
   title: string;
@@ -97,6 +104,74 @@ export function MonitoringDashboard() {
   const [isLoadingMetrics, setIsLoadingMetrics] = useState(true);
   const [isLoadingLogs, setIsLoadingLogs] = useState(true);
   const [dataSource, setDataSource] = useState<"mock" | "database">("mock");
+  const [realtimeEnabled, setRealtimeEnabled] = useState(true);
+  const logIdCounter = useRef(0);
+
+  // Handle real-time metric events
+  const handleRealtimeMetric = useCallback((data: MetricEventData) => {
+    setMetrics((prev) => {
+      if (!prev) return prev;
+
+      const agentId = data.agent_id;
+      const tokens = data.total_tokens || 0;
+      const cost = data.cost_usd || 0;
+      const latency = data.latency_ms || 0;
+      const isError = data.status === "error" || data.status === "timeout";
+
+      const currentAgent = prev.byAgent[agentId] || {
+        requests: 0,
+        tokens: 0,
+        cost: 0,
+        avgLatency: 0,
+        errors: 0,
+      };
+
+      // Calculate new average latency
+      const totalLatency = currentAgent.avgLatency * currentAgent.requests + latency;
+      const newRequests = currentAgent.requests + 1;
+      const newAvgLatency = totalLatency / newRequests;
+
+      return {
+        ...prev,
+        totalRequests: prev.totalRequests + 1,
+        totalTokens: prev.totalTokens + tokens,
+        totalCost: prev.totalCost + cost,
+        totalErrors: prev.totalErrors + (isError ? 1 : 0),
+        byAgent: {
+          ...prev.byAgent,
+          [agentId]: {
+            requests: newRequests,
+            tokens: currentAgent.tokens + tokens,
+            cost: currentAgent.cost + cost,
+            avgLatency: newAvgLatency,
+            errors: currentAgent.errors + (isError ? 1 : 0),
+          },
+        },
+      };
+    });
+  }, []);
+
+  // Handle real-time log events
+  const handleRealtimeLog = useCallback((data: LogEventData) => {
+    // Skip if filter doesn't match
+    if (logFilter !== "all" && data.level !== logFilter) return;
+
+    const newLog: LogEntry = {
+      id: `rt-${Date.now()}-${++logIdCounter.current}`,
+      created_at: data.timestamp,
+      level: data.level,
+      message: data.message,
+      agent_id: data.agent_id || "system",
+    };
+
+    setLogs((prev) => [newLog, ...prev.slice(0, 49)]); // Keep max 50 logs
+  }, [logFilter]);
+
+  // Real-time event hook
+  const { isConnected } = useRealtimeEvents({
+    onMetric: realtimeEnabled ? handleRealtimeMetric : undefined,
+    onLog: realtimeEnabled ? handleRealtimeLog : undefined,
+  });
 
   const loadMetrics = useCallback(async () => {
     setIsLoadingMetrics(true);
@@ -179,15 +254,52 @@ export function MonitoringDashboard() {
         <div>
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             Monitoring Dashboard
-            {dataSource === "database" ? (
-              <Cloud className="h-4 w-4 text-emerald-400" title="Live data" />
-            ) : (
-              <CloudOff className="h-4 w-4 text-amber-400" title="Demo data" />
+            <span title={dataSource === "database" ? "Live data" : "Demo data"}>
+              {dataSource === "database" ? (
+                <Cloud className="h-4 w-4 text-emerald-400" />
+              ) : (
+                <CloudOff className="h-4 w-4 text-amber-400" />
+              )}
+            </span>
+            {/* Real-time connection indicator */}
+            {realtimeEnabled && (
+              <span className="flex items-center gap-1 ml-2" title={isConnected ? "Real-time connected" : "Disconnected"}>
+                {isConnected ? (
+                  <Radio className="h-4 w-4 text-emerald-400 animate-pulse" />
+                ) : (
+                  <WifiOff className="h-4 w-4 text-red-400" />
+                )}
+                <span className={cn(
+                  "text-xs",
+                  isConnected ? "text-emerald-400" : "text-red-400"
+                )}>
+                  {isConnected ? "Live" : "Offline"}
+                </span>
+              </span>
             )}
           </h2>
           <p className="text-sm text-slate-400">Real-time system metrics and logs</p>
         </div>
         <div className="flex items-center gap-2">
+          {/* Real-time toggle */}
+          <button
+            type="button"
+            onClick={() => setRealtimeEnabled(!realtimeEnabled)}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded text-sm transition-colors",
+              realtimeEnabled
+                ? "bg-emerald-600/20 text-emerald-400 border border-emerald-600/50"
+                : "bg-slate-800 text-slate-400 border border-slate-700"
+            )}
+            title={realtimeEnabled ? "Disable real-time updates" : "Enable real-time updates"}
+          >
+            {realtimeEnabled ? (
+              <Radio className="h-3.5 w-3.5" />
+            ) : (
+              <WifiOff className="h-3.5 w-3.5" />
+            )}
+            Real-time
+          </button>
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
@@ -360,7 +472,13 @@ export function MonitoringDashboard() {
             <div className="text-center py-8 text-slate-500">No logs found</div>
           ) : (
             logs.map((log) => (
-              <div key={log.id} className="flex items-center gap-4 px-4 py-2 text-sm hover:bg-slate-800/50">
+              <div
+                key={log.id}
+                className={cn(
+                  "flex items-center gap-4 px-4 py-2 text-sm hover:bg-slate-800/50 transition-colors",
+                  log.id.startsWith("rt-") && "bg-violet-900/20"
+                )}
+              >
                 <span className="text-xs text-slate-500 font-mono w-20">
                   {new Date(log.created_at).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
                 </span>

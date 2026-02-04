@@ -46,7 +46,10 @@ export interface SettingsRow {
 
 // Helper functions for settings
 export async function loadSettings(userId: string, settingsType: string) {
-  const { data, error } = await supabase
+  const client = getSupabase();
+  if (!client) return null;
+
+  const { data, error } = await client
     .from("llm_top_settings")
     .select("data")
     .eq("user_id", userId)
@@ -66,7 +69,10 @@ export async function saveSettings(
   settingsType: string,
   data: Record<string, unknown>
 ) {
-  const { error } = await supabase
+  const client = getSupabase();
+  if (!client) return false;
+
+  const { error } = await client
     .from("llm_top_settings")
     .upsert(
       {
@@ -89,7 +95,10 @@ export async function saveSettings(
 }
 
 export async function loadAllSettings(userId: string) {
-  const { data, error } = await supabase
+  const client = getSupabase();
+  if (!client) return null;
+
+  const { data, error } = await client
     .from("llm_top_settings")
     .select("settings_type, data")
     .eq("user_id", userId);

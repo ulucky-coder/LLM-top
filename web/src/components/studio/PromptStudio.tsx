@@ -237,13 +237,15 @@ export function PromptStudio({ onLog }: PromptStudioProps) {
             Промпты агентов
           </h3>
           <div className="flex items-center gap-1">
-            {dataSource === "database" ? (
-              <Cloud className="h-3 w-3 text-emerald-400" title="Synced with database" />
-            ) : dataSource === "loading" ? (
-              <Loader2 className="h-3 w-3 text-slate-400 animate-spin" />
-            ) : (
-              <CloudOff className="h-3 w-3 text-amber-400" title="Local only" />
-            )}
+            <span title={dataSource === "database" ? "Synced with database" : dataSource === "loading" ? "Loading..." : "Local only"}>
+              {dataSource === "database" ? (
+                <Cloud className="h-3 w-3 text-emerald-400" />
+              ) : dataSource === "loading" ? (
+                <Loader2 className="h-3 w-3 text-slate-400 animate-spin" />
+              ) : (
+                <CloudOff className="h-3 w-3 text-amber-400" />
+              )}
+            </span>
             <Button
               variant="ghost"
               size="icon"

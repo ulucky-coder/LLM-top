@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { calculateCost, MODEL_PRICING } from "@/lib/metrics";
+import { calculateCost } from "@/lib/metrics";
 import { getSupabase } from "@/lib/supabase";
+import { emitMetric, emitLog, emitAnalysis } from "@/lib/events";
 
 // Types
 interface ContextItem {
@@ -90,7 +91,7 @@ const AGENT_PROMPTS: Record<string, string> = {
 3. Данные важнее мнений`,
 };
 
-// Record metric to database
+// Record metric to database and emit real-time event
 async function recordMetric(data: {
   session_id?: string;
   agent_id: string;
@@ -103,6 +104,22 @@ async function recordMetric(data: {
   status: "success" | "error" | "timeout";
   error_message?: string;
 }) {
+  // Emit real-time event immediately
+  emitMetric({
+    agent_id: data.agent_id,
+    model: data.model,
+    prompt_tokens: data.prompt_tokens,
+    completion_tokens: data.completion_tokens,
+    total_tokens: data.total_tokens,
+    cost_usd: data.cost_usd,
+    latency_ms: data.latency_ms,
+    status: data.status,
+    error_message: data.error_message,
+    session_id: data.session_id,
+    timestamp: new Date().toISOString(),
+  });
+
+  // Persist to database (fire and forget)
   const supabase = getSupabase();
   if (!supabase) return;
 
@@ -116,7 +133,7 @@ async function recordMetric(data: {
   }
 }
 
-// Record log to database
+// Record log to database and emit real-time event
 async function recordLog(data: {
   level: "info" | "warning" | "error" | "success";
   message: string;
@@ -124,6 +141,16 @@ async function recordLog(data: {
   session_id?: string;
   metadata?: Record<string, unknown>;
 }) {
+  // Emit real-time event immediately
+  emitLog({
+    level: data.level,
+    message: data.message,
+    agent_id: data.agent_id,
+    session_id: data.session_id,
+    timestamp: new Date().toISOString(),
+  });
+
+  // Persist to database (fire and forget)
   const supabase = getSupabase();
   if (!supabase) return;
 
@@ -923,6 +950,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Emit analysis start event
+    emitAnalysis("analysis_start", {
+      session_id: session_id || `session-${Date.now()}`,
+    });
+
     // Log analysis start
     recordLog({
       level: "info",
@@ -967,6 +999,12 @@ export async function POST(request: NextRequest) {
     const totalTokens = analyses.reduce((sum, a) => sum + a.tokens, 0);
     const totalCost = analyses.reduce((sum, a) => sum + a.cost, 0);
     const totalDuration = Date.now() - requestStartTime;
+
+    // Emit analysis complete event
+    emitAnalysis("analysis_complete", {
+      session_id: session_id || `session-${Date.now()}`,
+      status: "success",
+    });
 
     // Log analysis completion
     recordLog({
