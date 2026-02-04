@@ -112,9 +112,23 @@ function TimelineEventItem({ event, isLast }: TimelineEventItemProps) {
   );
 }
 
+const TEMPLATES = [
+  { id: "strategy", name: "Стратегический анализ", description: "Анализ бизнес-стратегии" },
+  { id: "investment", name: "Инвестиционный анализ", description: "Оценка инвестиций" },
+  { id: "research", name: "Исследование", description: "Глубокий ресёрч темы" },
+  { id: "technical", name: "Технический аудит", description: "Аудит кода/архитектуры" },
+];
+
+const THINKING_PATTERNS = [
+  { id: "first-principles", name: "First Principles", description: "Мышление с нуля" },
+  { id: "inversion", name: "Инверсия", description: "Анализ от обратного" },
+  { id: "second-order", name: "Эффекты 2-го порядка", description: "Последствия последствий" },
+  { id: "probabilistic", name: "Вероятностное", description: "Байесовский подход" },
+];
+
 export function Sidebar() {
-  const { sidebarCollapsed, viewMode } = useUIStore();
-  const { currentSession, sessions, createSession } = useSessionStore();
+  const { sidebarCollapsed, viewMode, openDrawer, setViewMode, openCommandPalette } = useUIStore();
+  const { currentSession, sessions, createSession, updateSettings } = useSessionStore();
   const [expandedSections, setExpandedSections] = useState({
     history: false,
     templates: false,
@@ -247,8 +261,31 @@ export function Sidebar() {
             <FileText className="h-4 w-4 text-slate-500" />
             Шаблоны
           </span>
-          <ChevronRight className={cn("h-4 w-4 text-slate-500 transition-transform", expandedSections.templates && "rotate-90")} />
+          {expandedSections.templates ? (
+            <ChevronDown className="h-4 w-4 text-slate-500" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-slate-500" />
+          )}
         </button>
+        {expandedSections.templates && (
+          <div className="px-4 pb-3 space-y-1">
+            {TEMPLATES.map((template) => (
+              <button
+                type="button"
+                key={template.id}
+                onClick={() => {
+                  if (currentSession) {
+                    updateSettings({ thinkingPatterns: [] });
+                  }
+                }}
+                className="w-full text-left text-xs text-slate-400 py-1.5 px-2 rounded hover:bg-slate-800 cursor-pointer"
+              >
+                <div className="font-medium text-slate-300">{template.name}</div>
+                <div className="text-slate-500">{template.description}</div>
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Thinking Patterns */}
         <button
@@ -260,8 +297,43 @@ export function Sidebar() {
             <Brain className="h-4 w-4 text-slate-500" />
             Паттерны мышления
           </span>
-          <ChevronRight className={cn("h-4 w-4 text-slate-500 transition-transform", expandedSections.patterns && "rotate-90")} />
+          {expandedSections.patterns ? (
+            <ChevronDown className="h-4 w-4 text-slate-500" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-slate-500" />
+          )}
         </button>
+        {expandedSections.patterns && (
+          <div className="px-4 pb-3 space-y-1">
+            {THINKING_PATTERNS.map((pattern) => {
+              const isActive = currentSession?.settings.thinkingPatterns?.includes(pattern.id);
+              return (
+                <button
+                  type="button"
+                  key={pattern.id}
+                  onClick={() => {
+                    if (currentSession) {
+                      const current = currentSession.settings.thinkingPatterns || [];
+                      const updated = isActive
+                        ? current.filter((p) => p !== pattern.id)
+                        : [...current, pattern.id];
+                      updateSettings({ thinkingPatterns: updated });
+                    }
+                  }}
+                  className={cn(
+                    "w-full text-left text-xs py-1.5 px-2 rounded cursor-pointer transition-colors",
+                    isActive
+                      ? "bg-violet-600/20 border border-violet-500/50 text-violet-300"
+                      : "text-slate-400 hover:bg-slate-800"
+                  )}
+                >
+                  <div className="font-medium">{pattern.name}</div>
+                  <div className="text-slate-500">{pattern.description}</div>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Quick Actions */}
@@ -277,7 +349,7 @@ export function Sidebar() {
         </button>
         <button
           type="button"
-          onClick={() => console.log("Export clicked")}
+          onClick={() => openDrawer("export")}
           className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded"
         >
           <kbd className="w-5 text-center text-xs text-slate-500">[E]</kbd>
@@ -285,7 +357,7 @@ export function Sidebar() {
         </button>
         <button
           type="button"
-          onClick={() => console.log("Compare clicked")}
+          onClick={() => setViewMode("compare")}
           className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded"
         >
           <kbd className="w-5 text-center text-xs text-slate-500">[C]</kbd>
@@ -293,7 +365,7 @@ export function Sidebar() {
         </button>
         <button
           type="button"
-          onClick={() => console.log("Hotkeys clicked")}
+          onClick={openCommandPalette}
           className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded"
         >
           <kbd className="w-5 text-center text-xs text-slate-500">[?]</kbd>
