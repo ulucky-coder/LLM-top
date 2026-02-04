@@ -23,6 +23,8 @@ export function useKeyboardShortcuts() {
     exitPresentMode,
     toggleCompareSyncScroll,
     toggleCompareShowDiff,
+    toggleControlPlane,
+    controlPlaneOpen,
   } = useUIStore();
 
   const { createSession, startAnalysis, pauseAnalysis, currentSession } = useSessionStore();
@@ -147,6 +149,11 @@ export function useKeyboardShortcuts() {
       // Cmd/Ctrl + key shortcuts
       if (e.metaKey || e.ctrlKey) {
         switch (e.key) {
+          case "`":
+            e.preventDefault();
+            toggleControlPlane();
+            break;
+
           case "\\":
             e.preventDefault();
             if (e.shiftKey) {
@@ -207,5 +214,7 @@ export function useKeyboardShortcuts() {
     exitPresentMode,
     toggleCompareSyncScroll,
     toggleCompareShowDiff,
+    toggleControlPlane,
+    controlPlaneOpen,
   ]);
 }

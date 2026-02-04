@@ -10,6 +10,9 @@ interface UIState {
   drawerContent: DrawerContent;
   drawerData: Record<string, unknown>;
 
+  // Control Plane
+  controlPlaneOpen: boolean;
+
   // View mode
   viewMode: ViewMode;
   previousViewMode: ViewMode;
@@ -74,6 +77,11 @@ interface UIState {
 
   selectAgent: (agentId: string | null) => void;
   selectCritique: (critique: { from: string; to: string } | null) => void;
+
+  // Control Plane
+  openControlPlane: () => void;
+  closeControlPlane: () => void;
+  toggleControlPlane: () => void;
 }
 
 const VIEW_MODE_ORDER: ViewMode[] = ["workspace", "document", "present", "compare"];
@@ -84,6 +92,9 @@ export const useUIStore = create<UIState>((set, get) => ({
   drawerOpen: false,
   drawerContent: null,
   drawerData: {},
+
+  // Control Plane
+  controlPlaneOpen: false,
 
   // View mode
   viewMode: "workspace",
@@ -248,5 +259,18 @@ export const useUIStore = create<UIState>((set, get) => ({
 
   selectCritique: (critique) => {
     set({ selectedCritique: critique });
+  },
+
+  // Control Plane
+  openControlPlane: () => {
+    set({ controlPlaneOpen: true });
+  },
+
+  closeControlPlane: () => {
+    set({ controlPlaneOpen: false });
+  },
+
+  toggleControlPlane: () => {
+    set((state) => ({ controlPlaneOpen: !state.controlPlaneOpen }));
   },
 }));
