@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // Types
+interface ContextItem {
+  type: "text" | "url";
+  title: string;
+  content: string;
+}
+
 interface AnalysisRequest {
   task: string;
   task_type: string;
   max_iterations: number;
+  context?: ContextItem[];
 }
 
 interface AgentAnalysis {
@@ -76,11 +83,24 @@ const AGENT_PROMPTS: Record<string, string> = {
 3. Данные важнее мнений`,
 };
 
+// Format context for prompts
+function formatContext(context?: ContextItem[]): string {
+  if (!context || context.length === 0) return "";
+
+  const formatted = context.map((item, i) => {
+    const typeLabel = item.type === "url" ? "Ссылка" : "Данные";
+    return `### ${typeLabel} ${i + 1}: ${item.title}\n${item.content}`;
+  }).join("\n\n");
+
+  return `\n\n---\nДОПОЛНИТЕЛЬНЫЙ КОНТЕКСТ:\n${formatted}\n---\n`;
+}
+
 // Call OpenAI API
-async function callOpenAI(task: string, taskType: string): Promise<AgentAnalysis | null> {
+async function callOpenAI(task: string, taskType: string, context?: ContextItem[]): Promise<AgentAnalysis | null> {
   if (!OPENAI_API_KEY) return null;
 
   const startTime = Date.now();
+  const contextStr = formatContext(context);
 
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -93,7 +113,7 @@ async function callOpenAI(task: string, taskType: string): Promise<AgentAnalysis
         model: "gpt-4o",
         messages: [
           { role: "system", content: AGENT_PROMPTS.chatgpt },
-          { role: "user", content: `Тип анализа: ${taskType}\n\nЗадача:\n${task}\n\nПроведи структурированный анализ. Выдели ключевые точки, риски и допущения.` },
+          { role: "user", content: `Тип анализа: ${taskType}\n\nЗадача:\n${task}${contextStr}\n\nПроведи структурированный анализ. Выдели ключевые точки, риски и допущения.` },
         ],
         temperature: 0.3,
       }),
@@ -126,10 +146,11 @@ async function callOpenAI(task: string, taskType: string): Promise<AgentAnalysis
 }
 
 // Call Anthropic API
-async function callAnthropic(task: string, taskType: string): Promise<AgentAnalysis | null> {
+async function callAnthropic(task: string, taskType: string, context?: ContextItem[]): Promise<AgentAnalysis | null> {
   if (!ANTHROPIC_API_KEY) return null;
 
   const startTime = Date.now();
+  const contextStr = formatContext(context);
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -144,7 +165,7 @@ async function callAnthropic(task: string, taskType: string): Promise<AgentAnaly
         max_tokens: 4096,
         system: AGENT_PROMPTS.claude,
         messages: [
-          { role: "user", content: `Тип анализа: ${taskType}\n\nЗадача:\n${task}\n\nПроведи системный анализ. Выдели ключевые точки, риски и допущения.` },
+          { role: "user", content: `Тип анализа: ${taskType}\n\nЗадача:\n${task}${contextStr}\n\nПроведи системный анализ. Выдели ключевые точки, риски и допущения.` },
         ],
       }),
     });
@@ -176,10 +197,11 @@ async function callAnthropic(task: string, taskType: string): Promise<AgentAnaly
 }
 
 // Call Google AI API
-async function callGoogleAI(task: string, taskType: string): Promise<AgentAnalysis | null> {
+async function callGoogleAI(task: string, taskType: string, context?: ContextItem[]): Promise<AgentAnalysis | null> {
   if (!GOOGLE_API_KEY) return null;
 
   const startTime = Date.now();
+  const contextStr = formatContext(context);
 
   try {
     const response = await fetch(
@@ -190,7 +212,7 @@ async function callGoogleAI(task: string, taskType: string): Promise<AgentAnalys
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `${AGENT_PROMPTS.gemini}\n\nТип анализа: ${taskType}\n\nЗадача:\n${task}\n\nПредложи альтернативные подходы и решения. Выдели ключевые точки, риски и допущения.`
+              text: `${AGENT_PROMPTS.gemini}\n\nТип анализа: ${taskType}\n\nЗадача:\n${task}${contextStr}\n\nПредложи альтернативные подходы и решения. Выдели ключевые точки, риски и допущения.`
             }]
           }],
           generationConfig: { temperature: 0.5 },
@@ -225,10 +247,11 @@ async function callGoogleAI(task: string, taskType: string): Promise<AgentAnalys
 }
 
 // Call DeepSeek API
-async function callDeepSeek(task: string, taskType: string): Promise<AgentAnalysis | null> {
+async function callDeepSeek(task: string, taskType: string, context?: ContextItem[]): Promise<AgentAnalysis | null> {
   if (!DEEPSEEK_API_KEY) return null;
 
   const startTime = Date.now();
+  const contextStr = formatContext(context);
 
   try {
     const response = await fetch("https://api.deepseek.com/chat/completions", {
@@ -241,7 +264,7 @@ async function callDeepSeek(task: string, taskType: string): Promise<AgentAnalys
         model: "deepseek-chat",
         messages: [
           { role: "system", content: AGENT_PROMPTS.deepseek },
-          { role: "user", content: `Тип анализа: ${taskType}\n\nЗадача:\n${task}\n\nПроведи количественный анализ с расчётами. Выдели ключевые точки, риски и допущения.` },
+          { role: "user", content: `Тип анализа: ${taskType}\n\nЗадача:\n${task}${contextStr}\n\nПроведи количественный анализ с расчётами. Выдели ключевые точки, риски и допущения.` },
         ],
         temperature: 0.2,
       }),
@@ -506,7 +529,7 @@ function generateMockSynthesis(analyses: AgentAnalysis[], task: string): Synthes
 export async function POST(request: NextRequest) {
   try {
     const body: AnalysisRequest = await request.json();
-    const { task, task_type, max_iterations } = body;
+    const { task, task_type, max_iterations, context } = body;
 
     if (!task || !task.trim()) {
       return NextResponse.json(
@@ -518,12 +541,12 @@ export async function POST(request: NextRequest) {
     let analyses: AgentAnalysis[] = [];
 
     if (useRealAPIs) {
-      // Call real APIs in parallel
+      // Call real APIs in parallel with context
       const results = await Promise.all([
-        callOpenAI(task, task_type),
-        callAnthropic(task, task_type),
-        callGoogleAI(task, task_type),
-        callDeepSeek(task, task_type),
+        callOpenAI(task, task_type, context),
+        callAnthropic(task, task_type, context),
+        callGoogleAI(task, task_type, context),
+        callDeepSeek(task, task_type, context),
       ]);
 
       analyses = results.filter((r): r is AgentAnalysis => r !== null);

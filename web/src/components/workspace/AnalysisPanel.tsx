@@ -24,7 +24,14 @@ import {
   FileText,
   Lightbulb,
   Target,
+  Plus,
+  X,
+  Link,
+  Database,
+  BookOpen,
+  Trash2,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 export function AnalysisPanel() {
   const { currentSession } = useSessionStore();
@@ -51,13 +58,30 @@ function InputPanel() {
     updateMetrics,
     setStatus,
     setCurrentIteration,
+    addContext,
+    removeContext,
   } = useSessionStore();
 
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showContext, setShowContext] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [newContextTitle, setNewContextTitle] = useState("");
+  const [newContextContent, setNewContextContent] = useState("");
+  const [newContextType, setNewContextType] = useState<"text" | "url">("text");
 
   if (!currentSession) return null;
+
+  const handleAddContext = () => {
+    if (!newContextTitle.trim() || !newContextContent.trim()) return;
+    addContext({
+      type: newContextType,
+      title: newContextTitle.trim(),
+      content: newContextContent.trim(),
+    });
+    setNewContextTitle("");
+    setNewContextContent("");
+  };
 
   const runAnalysis = async () => {
     if (!currentSession.task.trim()) return;
@@ -83,6 +107,13 @@ function InputPanel() {
     });
 
     try {
+      // Prepare context for API
+      const contextData = currentSession.context.map(c => ({
+        type: c.type,
+        title: c.title,
+        content: c.content,
+      }));
+
       const response = await fetch(`${API_BASE_URL}/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -90,6 +121,7 @@ function InputPanel() {
           task: currentSession.task,
           task_type: currentSession.taskType,
           max_iterations: currentSession.settings.maxIterations,
+          context: contextData,
         }),
       });
 
@@ -189,6 +221,132 @@ function InputPanel() {
                 disabled={isAnalyzing}
               />
             </div>
+
+            {/* Context Section Toggle */}
+            <button
+              type="button"
+              onClick={() => setShowContext(!showContext)}
+              className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+            >
+              {showContext ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              <Database className="h-4 w-4" />
+              Дополнительный контекст
+              {currentSession.context.length > 0 && (
+                <Badge variant="outline" className="ml-2 border-violet-500 text-violet-400 text-xs">
+                  {currentSession.context.length}
+                </Badge>
+              )}
+            </button>
+
+            {/* Context Panel */}
+            {showContext && (
+              <div className="p-4 bg-slate-950/50 rounded-lg border border-slate-800 space-y-4">
+                <p className="text-xs text-slate-500">
+                  Добавьте данные, документы или ссылки для более глубокого анализа
+                </p>
+
+                {/* Existing Context Items */}
+                {currentSession.context.length > 0 && (
+                  <div className="space-y-2">
+                    {currentSession.context.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-start gap-3 p-3 bg-slate-900/50 rounded-lg border border-slate-700"
+                      >
+                        <div className="mt-0.5">
+                          {item.type === "url" ? (
+                            <Link className="h-4 w-4 text-blue-400" />
+                          ) : (
+                            <BookOpen className="h-4 w-4 text-violet-400" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-white text-sm truncate">{item.title}</span>
+                            <Badge variant="outline" className="text-xs border-slate-600">
+                              {item.type === "url" ? "URL" : "Текст"}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-slate-400 mt-1 line-clamp-2">{item.content}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeContext(item.id)}
+                          disabled={isAnalyzing}
+                          className="text-slate-500 hover:text-red-400 transition-colors"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add New Context */}
+                <div className="space-y-3 pt-2 border-t border-slate-700">
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setNewContextType("text")}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors text-sm",
+                        newContextType === "text"
+                          ? "border-violet-500 bg-violet-500/10 text-white"
+                          : "border-slate-700 text-slate-400 hover:border-slate-600"
+                      )}
+                    >
+                      <BookOpen className="h-4 w-4" />
+                      Текст/Данные
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setNewContextType("url")}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors text-sm",
+                        newContextType === "url"
+                          ? "border-violet-500 bg-violet-500/10 text-white"
+                          : "border-slate-700 text-slate-400 hover:border-slate-600"
+                      )}
+                    >
+                      <Link className="h-4 w-4" />
+                      URL/Ссылка
+                    </button>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Input
+                      placeholder="Название (например: Финансовый отчёт Q3)"
+                      value={newContextTitle}
+                      onChange={(e) => setNewContextTitle(e.target.value)}
+                      disabled={isAnalyzing}
+                      className="bg-slate-900 border-slate-700 text-white text-sm"
+                    />
+                    <Textarea
+                      placeholder={
+                        newContextType === "url"
+                          ? "Вставьте URL (например: https://example.com/report.pdf)"
+                          : "Вставьте текст, данные, цитаты, таблицы..."
+                      }
+                      value={newContextContent}
+                      onChange={(e) => setNewContextContent(e.target.value)}
+                      disabled={isAnalyzing}
+                      className="min-h-24 bg-slate-900 border-slate-700 text-white text-sm resize-none"
+                    />
+                  </div>
+
+                  <Button
+                    type="button"
+                    onClick={handleAddContext}
+                    disabled={isAnalyzing || !newContextTitle.trim() || !newContextContent.trim()}
+                    variant="outline"
+                    className="w-full border-dashed border-slate-600 text-slate-400 hover:text-white hover:border-violet-500"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Добавить контекст
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* Basic Settings Row */}
             <div className="flex flex-wrap gap-3 lg:gap-4">

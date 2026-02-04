@@ -77,11 +77,20 @@ export interface SessionSettings {
   thinkingPatterns: string[];
 }
 
+export interface ContextItem {
+  id: string;
+  type: "text" | "url" | "file";
+  title: string;
+  content: string;
+  metadata?: Record<string, unknown>;
+}
+
 export interface Session {
   id: string;
   status: "input" | "running" | "paused" | "complete" | "error";
   task: string;
   taskType: TaskType;
+  context: ContextItem[];
   settings: SessionSettings;
   currentIteration: number;
   timeline: TimelineEvent[];
@@ -127,6 +136,12 @@ interface SessionState {
   setSynthesis: (synthesis: SynthesisResult) => void;
   updateMetrics: (metrics: Partial<Session["metrics"]>) => void;
 
+  // Context
+  addContext: (item: Omit<ContextItem, "id">) => void;
+  updateContext: (id: string, updates: Partial<ContextItem>) => void;
+  removeContext: (id: string) => void;
+  clearContext: () => void;
+
   // Notes
   addNote: (content: string, position?: number) => void;
   deleteNote: (id: string) => void;
@@ -149,6 +164,7 @@ const createEmptySession = (): Session => ({
   status: "input",
   task: "",
   taskType: "strategy",
+  context: [],
   settings: {
     ...DEFAULT_SETTINGS,
     models: {
@@ -353,6 +369,60 @@ export const useSessionStore = create<SessionState>()(
         ? {
             ...state.currentSession,
             metrics: { ...state.currentSession.metrics, ...metrics },
+            updatedAt: new Date(),
+          }
+        : null,
+    }));
+  },
+
+  // Context actions
+  addContext: (item) => {
+    set((state) => ({
+      currentSession: state.currentSession
+        ? {
+            ...state.currentSession,
+            context: [
+              ...state.currentSession.context,
+              { ...item, id: generateUUID() },
+            ],
+            updatedAt: new Date(),
+          }
+        : null,
+    }));
+  },
+
+  updateContext: (id, updates) => {
+    set((state) => ({
+      currentSession: state.currentSession
+        ? {
+            ...state.currentSession,
+            context: state.currentSession.context.map((c) =>
+              c.id === id ? { ...c, ...updates } : c
+            ),
+            updatedAt: new Date(),
+          }
+        : null,
+    }));
+  },
+
+  removeContext: (id) => {
+    set((state) => ({
+      currentSession: state.currentSession
+        ? {
+            ...state.currentSession,
+            context: state.currentSession.context.filter((c) => c.id !== id),
+            updatedAt: new Date(),
+          }
+        : null,
+    }));
+  },
+
+  clearContext: () => {
+    set((state) => ({
+      currentSession: state.currentSession
+        ? {
+            ...state.currentSession,
+            context: [],
             updatedAt: new Date(),
           }
         : null,
