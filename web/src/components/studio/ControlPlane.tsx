@@ -7,6 +7,7 @@ import { PipelineBuilder } from "./PipelineBuilder";
 import { DatabaseStudio } from "./DatabaseStudio";
 import { MonitoringDashboard } from "./MonitoringDashboard";
 import { ExperimentPanel } from "./ExperimentPanel";
+import { ConfigManager } from "./ConfigManager";
 import {
   Home,
   FileCode,
@@ -176,7 +177,7 @@ export function ControlPlane({ onClose }: { onClose?: () => void }) {
             {activeTab === "pipeline" && <PipelineBuilder onLog={addConsoleLog} />}
             {activeTab === "database" && <DatabaseStudio onLog={addConsoleLog} />}
             {activeTab === "monitoring" && <MonitoringDashboard />}
-            {activeTab === "settings" && <SettingsPanel />}
+            {activeTab === "settings" && <SettingsPanel onLog={addConsoleLog} />}
           </div>
 
           {/* Console */}
@@ -291,37 +292,75 @@ function QuickCard({ icon, title, description, shortcut }: {
   );
 }
 
-function SettingsPanel() {
+function SettingsPanel({ onLog }: { onLog?: (message: string) => void }) {
+  const [activeSection, setActiveSection] = useState<"general" | "backup">("general");
+
   return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <h2 className="text-xl font-bold text-white mb-6">Настройки системы</h2>
+    <div className="h-full flex flex-col">
+      {/* Settings Tabs */}
+      <div className="flex border-b border-slate-800 px-4">
+        <button
+          type="button"
+          onClick={() => setActiveSection("general")}
+          className={cn(
+            "px-4 py-3 text-sm font-medium transition-colors",
+            activeSection === "general"
+              ? "text-white border-b-2 border-violet-500"
+              : "text-slate-400 hover:text-white"
+          )}
+        >
+          Общие
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveSection("backup")}
+          className={cn(
+            "px-4 py-3 text-sm font-medium transition-colors",
+            activeSection === "backup"
+              ? "text-white border-b-2 border-violet-500"
+              : "text-slate-400 hover:text-white"
+          )}
+        >
+          Экспорт / Импорт
+        </button>
+      </div>
 
-      <div className="space-y-6">
-        <div className="p-4 bg-slate-900 rounded-lg border border-slate-800">
-          <h3 className="text-sm font-medium text-white mb-4">API Ключи</h3>
-          <div className="space-y-3">
-            {["OpenAI", "Anthropic", "Google AI", "DeepSeek"].map((name) => (
-              <div key={name} className="flex items-center justify-between">
-                <span className="text-sm text-slate-400">{name}</span>
-                <span className="text-xs text-amber-400">Не настроен</span>
+      <div className="flex-1 overflow-auto">
+        {activeSection === "general" ? (
+          <div className="p-8 max-w-2xl mx-auto">
+            <h2 className="text-xl font-bold text-white mb-6">Настройки системы</h2>
+
+            <div className="space-y-6">
+              <div className="p-4 bg-slate-900 rounded-lg border border-slate-800">
+                <h3 className="text-sm font-medium text-white mb-4">API Ключи</h3>
+                <div className="space-y-3">
+                  {["OpenAI", "Anthropic", "Google AI", "DeepSeek"].map((name) => (
+                    <div key={name} className="flex items-center justify-between">
+                      <span className="text-sm text-slate-400">{name}</span>
+                      <span className="text-xs text-amber-400">Не настроен</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        <div className="p-4 bg-slate-900 rounded-lg border border-slate-800">
-          <h3 className="text-sm font-medium text-white mb-4">База данных</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400">Supabase URL</span>
-              <span className="text-emerald-400 text-xs">Подключено</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400">Таблиц</span>
-              <span className="text-white">12</span>
+              <div className="p-4 bg-slate-900 rounded-lg border border-slate-800">
+                <h3 className="text-sm font-medium text-white mb-4">База данных</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Supabase URL</span>
+                    <span className="text-emerald-400 text-xs">Подключено</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Таблиц</span>
+                    <span className="text-white">12</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <ConfigManager onLog={onLog} />
+        )}
       </div>
     </div>
   );
